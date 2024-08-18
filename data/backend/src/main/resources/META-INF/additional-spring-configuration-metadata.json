@@ -1,0 +1,27 @@
+{"properties": [
+  {
+    "name": "tsc.protocol",
+    "type": "java.lang.String",
+    "description": "A description for 'tsc.protocol'"
+  },
+  {
+    "name": "tsc.host",
+    "type": "java.lang.String",
+    "description": "A description for 'tsc.host'"
+  },
+  {
+    "name": "tsc.backend.prefix",
+    "type": "java.lang.String",
+    "description": "A description for 'tsc.backend.prefix'"
+  },
+  {
+    "name": "tsc.client.id",
+    "type": "java.lang.String",
+    "description": "A description for 'tsc.client.id'"
+  },
+  {
+    "name": "tsc.client.token",
+    "type": "java.lang.String",
+    "description": "A description for 'tsc.client.token'"
+  }
+]}

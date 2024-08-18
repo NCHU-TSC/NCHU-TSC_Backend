@@ -1,0 +1,47 @@
+networks:
+  reverse-proxy:
+    name: reverse-proxy-nchu
+    external: true
+  internal:
+
+services:
+  database:
+    image: mariadb:11.4.3-noble
+    restart: always
+    volumes:
+      - ./data/db:/var/lib/mysql
+    networks:
+      - internal
+    env_file:
+      - ./secrets/db.env
+
+  api:
+    image: eclipse-temurin:21-noble
+    restart: always
+    entrypoint: ["/app/entrypoint.sh"]
+    depends_on:
+      - database
+    volumes:
+      - ./data/backend:/app
+    networks:
+      - reverse-proxy
+      - internal
+    env_file:
+      - ./secrets/db.env
+    environment:
+      DB_HOST: database
+      DB_PORT: 3306
+      API_PROTOCOL: https
+      API_HOST: tsc.$MAIN_DOMAIN
+      API_PREFIX: api
+    expose:
+      - 8080
+    labels:
+      - "traefik.enable=true"
+      # http
+      - "traefik.http.routers.nchu_tsc-api-http.entrypoints=web"
+      - "traefik.http.routers.nchu_tsc-api-http.rule=Host(`api.tsc.$MAIN_DOMAIN`)"
+      - "traefik.http.routers.nchu_tsc-api-http.middlewares=redirect-to-https@file"
+      # https(secure)
+      - "traefik.http.routers.nchu_tsc-api.entrypoints=websecure"
+      - "traefik.http.routers.nchu_tsc-api.rule=Host(`api.tsc.$MAIN_DOMAIN`)"

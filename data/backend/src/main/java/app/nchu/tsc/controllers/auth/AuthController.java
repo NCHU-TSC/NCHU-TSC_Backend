@@ -1,0 +1,81 @@
+package app.nchu.tsc.controllers.auth;
+
+import java.util.UUID;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import app.nchu.tsc.models.Member;
+import app.nchu.tsc.models.Redirecting;
+import app.nchu.tsc.services.MemberService;
+import app.nchu.tsc.services.RedirectingService;
+import app.nchu.tsc.services.RoleService;
+import app.nchu.tsc.services.SystemVariableService;
+import app.nchu.tsc.services.TSCSettings;
+import app.nchu.tsc.utilities.CookieBuilder;
+import app.nchu.tsc.utilities.Random;
+import jakarta.servlet.http.HttpServletResponse;
+
+@RestController
+@RequestMapping("/auth")
+public class AuthController {
+
+    @Autowired
+    private SystemVariableService systemVariableService;
+
+    @Autowired
+    private RedirectingService redirectingService;
+
+    @Autowired
+    private MemberService memberService;
+
+    @Autowired
+    private RoleService roleService;
+
+    @Autowired
+    private TSCSettings tscSettings;
+
+    @GetMapping("/callback")
+    private void callback(@RequestParam String state, @RequestParam String id, @RequestParam String token, HttpServletResponse response) {
+        Redirecting r = redirectingService.getRedirecting(state);
+
+        if (r == null || redirectingService.isExpired(r)) {
+            response.setStatus(404);
+            return;
+        }
+
+        UUID resID = UUID.fromString(id);
+        Member member;
+        if (memberService.isMemberExistsByResID(resID)) {
+            member = memberService.createMember(
+                Member.builder()
+                    .resID(resID)
+                    .resToken(token)
+                    .token(Random.generateRandomString(128))
+                    .role(roleService.getRoleByName(systemVariableService.get("default_role")))
+                    .build()
+            );
+        } else {
+            member = memberService.getMemberByResID(resID);
+        }
+
+        response.addCookie(
+            (new CookieBuilder("user_id", member.getId().toString()))
+                .httpOnly(false).secure(true).path("/").maxAge(2592000)
+                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+        );
+
+        response.addCookie(
+            (new CookieBuilder("user_token", member.getToken()))
+                .httpOnly(true).secure(true).path("/").maxAge(2592000)
+                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+        );
+
+        response.setHeader("Location", r.getHref());
+        response.setStatus(302);
+    }
+
+}
