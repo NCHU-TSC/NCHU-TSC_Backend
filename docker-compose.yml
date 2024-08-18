@@ -1,12 +1,12 @@
 networks:
   reverse-proxy:
-    name: reverse-proxy-nchu
+    name: reverse-proxy-nchuapp
     external: true
   internal:
 
 services:
   database:
-    image: mariadb:11.4.3-noble
+    image: mariadb:11.4.2-noble
     restart: always
     volumes:
       - ./data/db:/var/lib/mysql
