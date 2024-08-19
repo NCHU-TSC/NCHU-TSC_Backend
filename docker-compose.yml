@@ -18,7 +18,7 @@ services:
   api:
     image: eclipse-temurin:21-noble
     restart: always
-    entrypoint: ["/app/entrypoint.sh"]
+    entrypoint: ["/bin/sh", "/app/entrypoint.sh"]
     depends_on:
       - database
     volumes:

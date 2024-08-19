@@ -2,7 +2,6 @@
 set -x
 
 cd /app
-./mvnw spring-boot:run
-
+java -jar tsc-0.0.1-SNAPSHOT.jar
 
 set +x
