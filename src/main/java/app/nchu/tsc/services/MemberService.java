@@ -1,6 +1,7 @@
 package app.nchu.tsc.services;
 
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,9 @@ public class MemberService {
 
     @Autowired
     private AuthService authService;
+
+    @Autowired
+    private SystemVariableService systemVariableService;
 
     public Member createMember(Member member) {
         return memberRepository.save(member);
@@ -44,6 +48,21 @@ public class MemberService {
         return member;
     }
 
+    public boolean canApplyCase(UUID id) {
+        Member member = memberRepository.findById(id).orElse(null);
+
+        if(member == null || member.isBlocked()) {
+            return false;
+        }
+
+        if(member.getRole().isNeedPayToJoin()
+            && member.getLastPayEntryTime().plusDays(Long.parseLong(systemVariableService.get("general_member_valid_interval"))).isBefore(LocalDateTime.now())) {
+            return false;
+        }
+
+        return true;
+    }
+
     public GQL_Member toMember(Member member) {
         GQL_Member result = new GQL_Member();
 
@@ -56,6 +75,7 @@ public class MemberService {
         result.setLineID(member.getLineID());
         result.setExpertise(member.getExpertise());
         result.setDutyTime(member.getDutyTime());
+        result.setApplying(member.isApplying());
         result.setLastPayEntryTime(member.getLastPayEntryTime().toString());
         result.setBlocked(member.isBlocked());
         result.setNote(member.getNote());

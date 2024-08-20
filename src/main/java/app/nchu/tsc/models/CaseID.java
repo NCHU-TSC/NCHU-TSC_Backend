@@ -19,7 +19,8 @@ public class CaseID implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
-    private Year academicYear;
+    @Builder.Default
+    private Year academicYear = Year.now();
     private Short caseNumber;
 
     @Override

@@ -29,42 +29,45 @@ public class Role {
     private String name;
 
     @Column(nullable = false)
-    private Boolean canViewLog;
+    private boolean canViewLog;
 
     @Column(nullable = false)
-    private Boolean canViewMember;
+    private boolean canViewMember;
 
     @Column(nullable = false)
-    private Boolean canModifyMember;
+    private boolean canModifyMember;
 
     @Column(nullable = false)
-    private Boolean canViewCase;
+    private boolean canViewCase;
 
     @Column(nullable = false)
-    private Boolean canModifyCase;
+    private boolean canModifyCase;
 
     @Column(nullable = false)
-    private Boolean canViewCaseOrder;
+    private boolean canViewCaseOrder;
 
     @Column(nullable = false)
-    private Boolean canModifyCaseOrder;
+    private boolean canModifyCaseOrder;
 
     @Column(nullable = false)
-    private Boolean canViewBankRecord;
+    private boolean canViewBankRecord;
 
     @Column(nullable = false)
-    private Boolean canModifyBankRecord;
+    private boolean canModifyBankRecord;
 
     @Column(nullable = false)
-    private Boolean canViewRole;
+    private boolean canViewRole;
 
     @Column(nullable = false)
-    private Boolean canModifyRole;
+    private boolean canModifyRole;
 
     @Column(nullable = false)
-    private Boolean canViewSystemVariable;
+    private boolean canViewSystemVariable;
 
     @Column(nullable = false)
-    private Boolean canModifySystemVariable;
+    private boolean canModifySystemVariable;
+
+    @Column(nullable = false)
+    private boolean needPayToJoin;
     
 }

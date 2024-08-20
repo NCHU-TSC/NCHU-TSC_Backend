@@ -23,7 +23,7 @@ public class Member {
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime joinTime = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private UUID resID;
 
     @Column(nullable = false)
@@ -48,6 +48,10 @@ public class Member {
     @Column
     private String dutyTime;
 
+    @Column(nullable = false)
+    @Builder.Default
+    private boolean applying = false;
+
     @Column
     private LocalDateTime lastPayEntryTime;
 
@@ -57,19 +61,5 @@ public class Member {
 
     @Column
     private String note;
-
-    public Member(UUID resID, String resToken, String token,
-            Role role, String phone, String lineID,
-            String expertise, String dutyTime, String note) {
-        this.resID = resID;
-        this.resToken = resToken;
-        this.token = token;
-        this.role = role;
-        this.phone = phone;
-        this.lineID = lineID;
-        this.expertise = expertise;
-        this.dutyTime = dutyTime;
-        this.note = note;
-    }
     
 }

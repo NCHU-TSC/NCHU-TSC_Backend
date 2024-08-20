@@ -34,12 +34,12 @@ public class RoleService {
         GQL_Role result = new GQL_Role();
 
         result.setName(role.getName());
-        result.setCanViewLog(role.getCanViewLog());
-        result.setCanModifyRole(role.getCanModifyRole());
-        result.setCanModifyMember(role.getCanModifyMember());
-        result.setCanModifyCase(role.getCanModifyCase());
-        result.setCanModifyCaseOrder(role.getCanModifyCaseOrder());
-        result.setCanModifyBankRecord(role.getCanModifyBankRecord());
+        result.setCanViewLog(role.isCanViewLog());
+        result.setCanModifyRole(role.isCanModifyRole());
+        result.setCanModifyMember(role.isCanModifyMember());
+        result.setCanModifyCase(role.isCanModifyCase());
+        result.setCanModifyCaseOrder(role.isCanModifyCaseOrder());
+        result.setCanModifyBankRecord(role.isCanModifyBankRecord());
 
         return result;
     }

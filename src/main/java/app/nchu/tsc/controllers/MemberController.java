@@ -3,6 +3,7 @@ package app.nchu.tsc.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -40,7 +41,7 @@ public class MemberController {
     @DgsQuery
     private GQL_Member member(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanViewMember()) {
+        if(operator == null || !operator.getRole().isCanViewMember()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
@@ -50,7 +51,7 @@ public class MemberController {
     @DgsQuery
     private List<GQL_Member> members(@CookieValue UUID member_id, @CookieValue String member_token) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanViewMember()) {
+        if(operator == null || !operator.getRole().isCanViewMember()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
@@ -62,6 +63,22 @@ public class MemberController {
         }
 
         return result;
+    }
+
+    @DgsMutation
+    private GQL_Member applyGeneralMember(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument GQL_MemberInput data) {
+        Member operator = memberService.verifyWithToken(member_id, member_token);
+        if(operator == null) {
+            throw new PermissionDeniedException("Permission Denied");
+        }
+
+        operator.setApplying(true);
+        operator.setPhone(data.getPhone());
+        operator.setLineID(data.getLineID());
+        operator.setExpertise(data.getExpertise());
+        operator.setDutyTime(data.getDutyTime());
+
+        return memberService.toMember(memberRepository.save(operator));
     }
 
     @DgsMutation
@@ -80,9 +97,29 @@ public class MemberController {
     }
 
     @DgsMutation
+    private GQL_Member determineJoinMember(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument boolean accept) {
+        Member operator = memberService.verifyWithToken(member_id, member_token);
+        if(operator == null || !operator.getRole().isCanModifyMember()) {
+            throw new PermissionDeniedException("Permission Denied");
+        }
+
+        Member member = memberRepository.findById(id).orElse(null);
+        if(member == null) {
+            return null;
+        }
+
+        member.setApplying(false);
+        if(accept) {
+            member.setLastPayEntryTime(LocalDateTime.now());
+        }
+
+        return memberService.toMember(memberRepository.save(member));
+    }
+
+    @DgsMutation
     private GQL_Member setMemberData(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument GQL_MemberInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanModifyMember()) {
+        if(operator == null || !operator.getRole().isCanModifyMember()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
@@ -102,7 +139,7 @@ public class MemberController {
     @DgsMutation
     private GQL_Member setMemberRole(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument String roleName) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanModifyRole()) {
+        if(operator == null || !operator.getRole().isCanModifyRole()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
@@ -120,7 +157,7 @@ public class MemberController {
     @DgsMutation
     private GQL_Member setMemberNote(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument String note) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanModifyMember()) {
+        if(operator == null || !operator.getRole().isCanModifyMember()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
@@ -138,7 +175,7 @@ public class MemberController {
     @DgsMutation
     private GQL_Member setMemberBlocked(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument boolean blocked) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().getCanModifyMember()) {
+        if(operator == null || !operator.getRole().isCanModifyMember()) {
             throw new PermissionDeniedException("Permission Denied");
         }
 
