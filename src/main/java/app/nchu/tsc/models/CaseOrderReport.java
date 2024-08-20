@@ -1,5 +1,6 @@
 package app.nchu.tsc.models;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import jakarta.persistence.*;
@@ -12,7 +13,9 @@ import lombok.*;
 @Setter
 @EqualsAndHashCode
 @Embeddable
-public class CaseOrderReport {
+public class CaseOrderReport implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public enum Status {
         SUCCESS, FAILURE

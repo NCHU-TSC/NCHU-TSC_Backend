@@ -49,6 +49,13 @@ public class Member {
     private String dutyTime;
 
     @Column
+    private LocalDateTime lastPayEntryTime;
+
+    @Builder.Default
+    @Column(nullable = false)
+    private boolean blocked = false;
+
+    @Column
     private String note;
 
     public Member(UUID resID, String resToken, String token,

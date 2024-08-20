@@ -2,8 +2,8 @@ package app.nchu.tsc.utilities;
 
 import java.util.List;
 
-import app.nchu.tsc.codegen.types.QueryPair;
-import app.nchu.tsc.codegen.types.URL;
+import app.nchu.tsc.codegen.types.GQL_QueryPair;
+import app.nchu.tsc.codegen.types.GQL_URL;
 import lombok.*;
 
 @NoArgsConstructor
@@ -88,15 +88,15 @@ public class URLComposer {
         return href;
     }
 
-    public URL toURL() {
-        return URL.newBuilder()
+    public GQL_URL toURL() {
+        return GQL_URL.newBuilder()
             .href(this.href)
             .protocol(this.protocol)
             .host(this.host)
             .hostname(this.hostname)
             .port(this.port)
             .pathname(this.pathname)
-            .search(this.search.stream().map(queryPair -> QueryPair.newBuilder()
+            .search(this.search.stream().map(queryPair -> GQL_QueryPair.newBuilder()
             .key(queryPair.getKey())
             .value(queryPair.getValue())
             .build()).toList())

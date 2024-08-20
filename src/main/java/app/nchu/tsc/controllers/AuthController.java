@@ -1,4 +1,4 @@
-package app.nchu.tsc.controllers.auth;
+package app.nchu.tsc.controllers;
 
 import java.util.UUID;
 
@@ -63,13 +63,13 @@ public class AuthController {
         }
 
         response.addCookie(
-            (new CookieBuilder("user_id", member.getId().toString()))
+            (new CookieBuilder("member_id", member.getId().toString()))
                 .httpOnly(false).secure(true).path("/").maxAge(2592000)
                 .domain('.' + tscSettings.getFrontendURL(false, false)).build()
         );
 
         response.addCookie(
-            (new CookieBuilder("user_token", member.getToken()))
+            (new CookieBuilder("member_token", member.getToken()))
                 .httpOnly(true).secure(true).path("/").maxAge(2592000)
                 .domain('.' + tscSettings.getFrontendURL(false, false)).build()
         );

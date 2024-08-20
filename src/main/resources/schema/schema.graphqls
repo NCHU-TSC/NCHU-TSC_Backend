@@ -1,81 +1,79 @@
 type Query {
-    currentMember: Member # 取得目前登入的社員資料
-    availableCases: [Case!]! # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
+    currentMember: GQL_Member # 取得目前登入的社員資料
+    availableCases: [GQL_Case!]! # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
 
     # 以下為幹部專用
-    getMember(id: ID!): Member # 取得社員資料
-    getMembers: [Member!]! # 取得社員列表
-    getCase(id: String!): Case # 取得案件資料
-    getCases: [Case!]! # 取得案件列表
-    getCaseOrder(id: ID!): CaseOrder # 取得接案資料
-    getCaseOrders: [CaseOrder!]! # 取得接案列表
-    getBankRecord(id: ID!): BankRecord # 取得社團記帳資料
-    getBankRecords(startTime: String, endTime: String): [BankRecord!]! # 取得社團記帳列表
-    getSystemVariable(key: String!): SystemVariable # 取得系統變數
-    getSystemVariables: [SystemVariable!]! # 取得系統變數列表
+    member(id: ID!): GQL_Member # 取得社員資料
+    members: [GQL_Member!]! # 取得社員列表
+    case(id: String!): GQL_Case # 取得案件資料
+    cases: [GQL_Case!]! # 取得案件列表
+    caseOrder(id: ID!): GQL_CaseOrder # 取得接案資料
+    caseOrders: [GQL_CaseOrder!]! # 取得接案列表
+    bankRecord(id: ID!): GQL_BankRecord # 取得社團記帳資料
+    bankRecords(startTime: String, endTime: String): [GQL_BankRecord!]! # 取得社團記帳列表
+    systemVariable(key: String!): GQL_SystemVariable # 取得系統變數
+    systemVariables: [GQL_SystemVariable!]! # 取得系統變數列表
 }
 
 type Mutation {
     # 任何人皆可用
-    login(href: String!): URL! # 取得登入網址（href 為登入後要導向的網址）
-    addCase(data: CaseInput!): Case! # 新增案件
+    login(href: String!): GQL_URL! # 取得登入網址（href 為登入後要導向的網址）
+    addCase(data: GQL_CaseInput!): GQL_Case! # 新增案件
 
     # 登入後才可用
-    logout(href: String!): URL! # 取得登出網址（href 為登出後要導向的網址）
-    setMemberData(data: MemberInput!): Member! # 設定社員資料
-    applyCase(data: CaseOrderInput!): CaseOrder! # 申請接案
-    reportCaseOrder(id: ID!, report: CaseOrderReportInput!): CaseOrder! # 回報接案
+    logout(href: String!): GQL_URL! # 取得登出網址（href 為登出後要導向的網址）
+    setCurrentMemberData(data: GQL_MemberInput!): GQL_Member # 設定社員資料
+    applyCase(data: GQL_CaseOrderInput!): GQL_CaseOrder! # 申請接案
+    reportCaseOrder(id: ID!, report: GQL_CaseOrderReportInput!): GQL_CaseOrder! # 回報接案
 
     # 以下為幹部專用
-    setMemberNote(id: ID!, note: String!): Member! # 設定社員備註
-    setMemberRole(id: ID!, roleName: String!): Member! # 設定社員身分
-    setMemberBlocked(id: ID!, blocked: Boolean!): Member! # 設定社員黑名單
+    setMemberData(id: ID!, data: GQL_MemberInput!): GQL_Member # 設定社員資料
+    setMemberNote(id: ID!, note: String!): GQL_Member # 設定社員備註
+    setMemberRole(id: ID!, roleName: String!): GQL_Member # 設定社員身分
+    setMemberBlocked(id: ID!, blocked: Boolean!): GQL_Member # 設定社員黑名單
 
-    setCaseData(id: String!, data: CaseInput!): Case! # 設定案件資料
-    setCaseNote(id: String!, note: String!): Case! # 設定案件備註
-    setCasePostStatus(id: String!, postStatus: String!): Case! # 設定案件狀態
+    setCaseData(id: String!, data: GQL_CaseInput!): GQL_Case! # 設定案件資料
+    setCaseNote(id: String!, note: String!): GQL_Case! # 設定案件備註
+    setCasePostStatus(id: String!, postStatus: String!): GQL_Case! # 設定案件狀態
 
-    setCaseOrderNote(id: ID!, note: String!): CaseOrder! # 設定接案備註
+    setCaseOrderNote(id: ID!, note: String!): GQL_CaseOrder! # 設定接案備註
 
-    addBankRecord(data: BankRecordInput!): BankRecord! # 新增社團帳目
-    setBankRecord(id: ID!, data: BankRecordInput!): BankRecord! # 設定社團帳目
-    deleteBankRecord(id: ID!): BankRecord # 刪除社團帳目
+    addBankRecord(data: GQL_BankRecordInput!): GQL_BankRecord! # 新增社團帳目
+    setBankRecord(id: ID!, data: GQL_BankRecordInput!): GQL_BankRecord! # 設定社團帳目
+    deleteBankRecord(id: ID!): GQL_BankRecord # 刪除社團帳目
 
-    setSystemVariable(key: String!, value: String!): SystemVariable! # 設定系統變數
+    setSystemVariable(key: String!, value: String!): GQL_SystemVariable! # 設定系統變數
 }
 
-type URL {
+type GQL_URL {
     href: String! # 完整網址
     protocol: String! # 協定
     host: String! # 主機
     hostname: String! # 主機名稱
     port: Int # 連接埠
     pathname: String # 路徑
-    search: [QueryPair!] # 查詢
+    search: [GQL_QueryPair!] # 查詢
     hash: String # 錨點
     origin: String # 來源
 }
 
-type QueryPair {
+type GQL_QueryPair {
     key: String! # 鍵
     value: [String!]! # 值
 }
 
-type Role {
+type GQL_Role {
     name: String! # 身分組名稱
-    lastPaymentTime: String # 上次繳費時間
-    blocked: Boolean! # 是否在黑名單中
 
-    verified: Boolean! # 身分是否有效
     canViewLog: Boolean! # 可查看日誌
+    canModifyRole: Boolean! # 可修改身分組
     canModifyMember: Boolean! # 可修改社員資料
     canModifyCase: Boolean! # 可修改案件資料
     canModifyCaseOrder: Boolean! # 可修改接案資料
     canModifyBankRecord: Boolean! # 可修改社團記帳資料
-    canModifyRole: Boolean! # 可修改身分組
 }
 
-type InfoFromAuthServer {
+type GQL_InfoFromAuthServer {
     id: ID! # ID in Auth Server
     createTime: String! # 建立時間
 
@@ -92,23 +90,23 @@ type InfoFromAuthServer {
     photo: String # 頭像
 }
 
-input MemberInput {
+input GQL_MemberInput {
     phone: String # 電話
     lineID: String # Line ID
     expertise: String # 專長
     dutyTime: String # 值班社員負責時段
 }
 
-type Member {
+type GQL_Member {
     id: ID! # Member ID
-    role: Role! # 身分
+    role: GQL_Role! # 身分
 
     # 由於安全因素，管理員查詢時才有結果
     # 但不論如何皆會在登入時藉由 Set-Cookie 常駐在小型文字檔案中
     # 登出時清除
     token: String # 使用者令牌
 
-    basicInfo: InfoFromAuthServer! # 基本資料
+    basicInfo: GQL_InfoFromAuthServer! # 基本資料
     joinTime: String! # 加入時間
     
     phone: String # 電話
@@ -116,10 +114,12 @@ type Member {
     expertise: String # 專長
     dutyTime: String # 值班社員負責時段
 
+    lastPayEntryTime: String # 上次繳費時間
+    blocked: Boolean! # 是否在黑名單中
     note: String # 備註
 }
 
-input CaseInput {
+input GQL_CaseInput {
     contactName: String! # 聯絡人姓名
     email: String! # 聯絡人電子郵件
     phone: String! # 聯絡人電話
@@ -136,7 +136,7 @@ input CaseInput {
     problem: String # 其他問題
 }
 
-type Case {
+type GQL_Case {
     id: String! # Case ID
     addTime: String! # 新增時間
 
@@ -160,13 +160,13 @@ type Case {
     note: String # 備註
 }
 
-input CaseOrderReportInput {
+input GQL_CaseOrderReportInput {
     status: String! # 回報結果（成功SUCCESS、失敗FAILURE）
     result: String! # 成功的薪水或失敗的原因
     comment: String # 留言問題
 }
 
-type CaseOrderReport {
+type GQL_CaseOrderReport {
     time: String! # 回報時間
     
     status: String! # 回報結果（成功SUCCESS、失敗FAILURE）
@@ -174,28 +174,28 @@ type CaseOrderReport {
     comment: String # 留言問題
 }
 
-input CaseOrderInput {
+input GQL_CaseOrderInput {
     case: String! # 案件 ID
     applyMethod: String! # 申請方式（線上接案ONLINE、值班地點或幹部接案OFFLINE）
     bankAccount: String # 銀行帳號（僅線上接案）
     comment: String # 留言問題
 }
 
-type CaseOrder {
+type GQL_CaseOrder {
     id: ID! # Order ID
     orderTime: String! # 接案時間
-    member: Member! # 接案社員
+    member: GQL_Member! # 接案社員
     
-    case: Case! # 案件
+    case: GQL_Case! # 案件
     applyMethod: String! # 申請方式（線上接案ONLINE、值班地點或幹部接案OFFLINE）
     bankAccount: String # 銀行帳號（僅線上接案）
     comment: String # 留言問題
 
-    report: CaseOrderReport # 回報
+    report: GQL_CaseOrderReport # 回報
     note: String # 備註
 }
 
-input BankRecordInput {
+input GQL_BankRecordInput {
     recordTime: String! # 記錄時間
     type: String! # 類型（活動ACTIVITY、入社JOIN、接案ORDER、接案退費ORDER_REFUND、交接HANDOVER、贊助SPONSOR、經費FUND、其他OTHER）
     detail: String # 詳細內容
@@ -207,7 +207,7 @@ input BankRecordInput {
     note: String # 備註
 }
 
-type BankRecord {
+type GQL_BankRecord {
     id: ID! # Bank Record ID
     
     recordTime: String! # 記錄時間
@@ -215,15 +215,15 @@ type BankRecord {
     detail: String # 詳細內容
     direction: Boolean! # 進出帳（進帳TRUE、出帳FALSE）
     amount: Int! # 金額
-    transferIn: Member! # 轉入給誰
-    transferOut: Member! # 轉出給誰
+    transferIn: GQL_Member! # 轉入給誰
+    transferOut: GQL_Member! # 轉出給誰
     verified: Boolean! # 確認此筆記錄
     note: String # 備註
     
-    operator: Member # 經手人（確認者）
+    operator: GQL_Member # 經手人（確認者）
 }
 
-type SystemVariable {
+type GQL_SystemVariable {
     key: String! # 鍵
     value: String! # 值
     type: String! # 類型（STRING、INTEGER、BOOLEAN）

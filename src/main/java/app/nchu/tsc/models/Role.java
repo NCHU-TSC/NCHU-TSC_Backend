@@ -32,6 +32,39 @@ public class Role {
     private Boolean canViewLog;
 
     @Column(nullable = false)
+    private Boolean canViewMember;
+
+    @Column(nullable = false)
     private Boolean canModifyMember;
+
+    @Column(nullable = false)
+    private Boolean canViewCase;
+
+    @Column(nullable = false)
+    private Boolean canModifyCase;
+
+    @Column(nullable = false)
+    private Boolean canViewCaseOrder;
+
+    @Column(nullable = false)
+    private Boolean canModifyCaseOrder;
+
+    @Column(nullable = false)
+    private Boolean canViewBankRecord;
+
+    @Column(nullable = false)
+    private Boolean canModifyBankRecord;
+
+    @Column(nullable = false)
+    private Boolean canViewRole;
+
+    @Column(nullable = false)
+    private Boolean canModifyRole;
+
+    @Column(nullable = false)
+    private Boolean canViewSystemVariable;
+
+    @Column(nullable = false)
+    private Boolean canModifySystemVariable;
     
 }

@@ -16,6 +16,8 @@ import lombok.*;
 @EqualsAndHashCode
 @Embeddable
 public class CaseID implements Serializable {
+
+    private static final long serialVersionUID = 1L;
     
     private Year academicYear;
     private Short caseNumber;
