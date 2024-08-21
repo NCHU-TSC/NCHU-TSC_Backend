@@ -41,7 +41,6 @@ public class BankRecord {
     private LocalDateTime recordTime = LocalDateTime.now();
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
     private String type;
 
     @Column

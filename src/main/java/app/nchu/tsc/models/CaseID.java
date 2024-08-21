@@ -17,7 +17,10 @@ public class CaseID implements Serializable {
 
     private static final long serialVersionUID = 1L;
     
+    @Column(name = "academic_year")
     private Year academicYear;
+
+    @Column(name = "case_number")
     private Short caseNumber;
 
     @Override

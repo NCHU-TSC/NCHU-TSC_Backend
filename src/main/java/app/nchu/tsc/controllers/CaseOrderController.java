@@ -84,7 +84,7 @@ public class CaseOrderController {
     }
 
     @DgsMutation
-    private GQL_CaseOrder applyCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument GQL_CaseOrderInput data) {
+    private GQL_CaseOrder applyCase(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument GQL_CaseOrderInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
         if(operator == null || !memberService.canApplyCase(member_id)) {
             throw new PermissionDeniedException("Permission Denied");

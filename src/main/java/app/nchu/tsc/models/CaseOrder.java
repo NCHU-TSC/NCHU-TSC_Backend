@@ -27,11 +27,14 @@ public class CaseOrder {
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime orderTime = LocalDateTime.now();
 
-    @ManyToOne
-    @JoinColumn(nullable = false)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumns({
+        @JoinColumn(name = "academic_year", referencedColumnName = "academic_year"),
+        @JoinColumn(name = "case_number", referencedColumnName = "case_number")
+    })
     private Case caseID;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
     private Member memberID;
 
