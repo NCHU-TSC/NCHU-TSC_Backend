@@ -14,7 +14,7 @@ type Query {
     caseOrders: [GQL_CaseOrder!]! # 取得接案列表
     bankRecord(id: ID!): GQL_BankRecord! # 取得社團記帳資料
     bankRecords: [GQL_BankRecord!]! # 取得社團記帳列表
-    systemVariable(key: String!): GQL_SystemVariable! # 取得系統變數
+    systemVariable(key: String!): String! # 取得系統變數
     systemVariables: [GQL_SystemVariable!]! # 取得系統變數列表
 }
 
