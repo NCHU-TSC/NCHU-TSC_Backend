@@ -103,6 +103,29 @@ public class CaseOrderController {
     }
 
     @DgsMutation
+    private GQL_CaseOrder reportCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument GQL_CaseOrderReportInput report) {
+        Member operator = memberService.verifyWithToken(member_id, member_token);
+        if(operator == null) {
+            throw new PermissionDeniedException("Permission Denied");
+        }
+
+        CaseOrder co = caseOrderRepository.findById(id).orElse(null);
+        if(co == null) {
+            return null;
+        }
+
+        co.setReport(
+            CaseOrderReport.builder()
+                .reportStatus(CaseOrderReport.Status.valueOf(report.getStatus().name()))
+                .reportResult(report.getResult())
+                .reportComment(report.getComment())
+                .build()
+        );
+
+        return caseOrderService.toCaseOrder(caseOrderRepository.save(co));
+    }
+
+    @DgsMutation
     private GQL_CaseOrder determineApproveCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument Boolean accept) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
         if(operator == null || !operator.getRole().isCanModifyCaseOrder()) {
@@ -137,29 +160,6 @@ public class CaseOrderController {
         }
 
         co.setNote(note);
-
-        return caseOrderService.toCaseOrder(caseOrderRepository.save(co));
-    }
-
-    @DgsMutation
-    private GQL_CaseOrder reportCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument GQL_CaseOrderReportInput report) {
-        Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
-
-        CaseOrder co = caseOrderRepository.findById(id).orElse(null);
-        if(co == null) {
-            return null;
-        }
-
-        co.setReport(
-            CaseOrderReport.builder()
-                .reportStatus(CaseOrderReport.Status.valueOf(report.getStatus().name()))
-                .reportResult(report.getResult())
-                .reportComment(report.getComment())
-                .build()
-        );
 
         return caseOrderService.toCaseOrder(caseOrderRepository.save(co));
     }

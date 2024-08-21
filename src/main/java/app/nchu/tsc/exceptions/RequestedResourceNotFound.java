@@ -1,9 +1,9 @@
 package app.nchu.tsc.exceptions;
 
+import com.netflix.graphql.types.errors.ErrorDetail;
 import com.netflix.graphql.types.errors.TypedGraphQLError;
 
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,39 +14,39 @@ import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.GraphQLError;
 
-public class PermissionDeniedException extends RuntimeException {
+public class RequestedResourceNotFound extends RuntimeException {
 
-    private static final String msg = "The member with ID {} does not have the permission to perform this operation.";
+    private static final String msg = "The requested resource of the {0} type with ID {1} is not found.";
 
-    public PermissionDeniedException(UUID member_id) {
-        super(msg.replace("{}", member_id.toString()));
+    public RequestedResourceNotFound(String type, String id) {
+        super(msg.replace("{0}", type).replace("{1}", id));
     }
 
-    public PermissionDeniedException(String message) {
+    public RequestedResourceNotFound(String message) {
         super(message);
     }
 
-    public PermissionDeniedException(UUID member_id, Throwable cause) {
-        super(msg.replace("{}", member_id.toString()), cause);
+    public RequestedResourceNotFound(String type, String id, Throwable cause) {
+        super(msg.replace("{0}", type).replace("{1}", id), cause);
     }
 
-    public PermissionDeniedException(String message, Throwable cause) {
+    public RequestedResourceNotFound(String message, Throwable cause) {
         super(message, cause);
     }
 
     @Component
-    public static class PermissionDeniedExceptionHandler implements DataFetcherExceptionHandler {
+    public static class RequestedResourceNotFoundHandler implements DataFetcherExceptionHandler {
 
         @Autowired
         private DefaultHandler defaultHandler;
 
         @Override
         public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters parameters) {
-            if (parameters.getException() instanceof PermissionDeniedException) {
+            if (parameters.getException() instanceof RequestedResourceNotFound) {
                 HashMap<String, Object> debugInfo = new HashMap<>();
                 debugInfo.put("hello", "world");
                 
-                GraphQLError error = TypedGraphQLError.newPermissionDeniedBuilder()
+                GraphQLError error = TypedGraphQLError.newNotFoundBuilder().errorDetail(ErrorDetail.Common.MISSING_RESOURCE)
                         .message(parameters.getException().getMessage())
                         .path(parameters.getPath()).location(parameters.getSourceLocation())
                         .debugInfo(debugInfo).debugUri("debugUri").build();

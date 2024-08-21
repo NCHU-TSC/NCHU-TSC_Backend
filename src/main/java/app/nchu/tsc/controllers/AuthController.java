@@ -1,81 +1,37 @@
 package app.nchu.tsc.controllers;
 
-import java.util.UUID;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
 
-import app.nchu.tsc.models.Member;
+import com.netflix.graphql.dgs.DgsComponent;
+import com.netflix.graphql.dgs.DgsMutation;
+import com.netflix.graphql.dgs.InputArgument;
+
+import app.nchu.tsc.codegen.types.GQL_URL;
 import app.nchu.tsc.models.Redirecting;
-import app.nchu.tsc.repositories.RoleRepository;
-import app.nchu.tsc.services.MemberService;
+import app.nchu.tsc.services.AuthService;
 import app.nchu.tsc.services.RedirectingService;
-import app.nchu.tsc.services.SystemVariableService;
 import app.nchu.tsc.services.TSCSettings;
-import app.nchu.tsc.utilities.CookieBuilder;
-import app.nchu.tsc.utilities.Random;
-import jakarta.servlet.http.HttpServletResponse;
+import app.nchu.tsc.utilities.URLComposer;
 
-@RestController
-@RequestMapping("/auth")
+@DgsComponent
 public class AuthController {
-
-    @Autowired
-    private SystemVariableService systemVariableService;
 
     @Autowired
     private RedirectingService redirectingService;
 
     @Autowired
-    private MemberService memberService;
-
-    @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private TSCSettings tscSettings;
 
-    @GetMapping("/callback")
-    private void callback(@RequestParam String state, @RequestParam String id, @RequestParam String token, HttpServletResponse response) {
-        Redirecting r = redirectingService.getRedirecting(state);
+    @Autowired
+    private AuthService authService;
 
-        if (r == null || redirectingService.isExpired(r)) {
-            response.setStatus(404);
-            return;
-        }
+    @DgsMutation
+    private GQL_URL login(@InputArgument String href) {
+        Redirecting r = redirectingService.generateRedirecting(href, null);
 
-        UUID resID = UUID.fromString(id);
-        Member member;
-        if (memberService.isMemberExistsByResID(resID)) {
-            member = memberService.createMember(
-                Member.builder()
-                    .resID(resID)
-                    .resToken(token)
-                    .token(Random.generateRandomString(128))
-                    .role(roleRepository.findById(systemVariableService.get("default_role")).orElse(null))
-                    .build()
-            );
-        } else {
-            member = memberService.getMemberByResID(resID);
-        }
+        String callback_url = tscSettings.getBackendURL(true, true) + "auth/callback";
 
-        response.addCookie(
-            (new CookieBuilder("member_id", member.getId().toString()))
-                .httpOnly(false).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
-        );
-
-        response.addCookie(
-            (new CookieBuilder("member_token", member.getToken()))
-                .httpOnly(true).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
-        );
-
-        response.setHeader("Location", r.getHref());
-        response.setStatus(302);
+        return URLComposer.parse(authService.getLoginURL(callback_url, r.getId())).toURL();
     }
 
 }

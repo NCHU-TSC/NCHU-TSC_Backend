@@ -9,16 +9,12 @@ import app.nchu.tsc.codegen.types.GQL_CaseOrderReport;
 import app.nchu.tsc.codegen.types.GQL_CaseOrderStatus;
 import app.nchu.tsc.models.CaseOrder;
 import app.nchu.tsc.models.CaseOrderReport;
-import app.nchu.tsc.repositories.CaseOrderRepository;
 
 @Service
 public class CaseOrderService {
 
     @Autowired
     private MemberService memberService;
-
-    @Autowired
-    private CaseOrderRepository caseOrderRepository;
 
     public GQL_CaseOrder toCaseOrder(CaseOrder co) {
         GQL_CaseOrder result = new GQL_CaseOrder();

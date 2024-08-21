@@ -1,9 +1,9 @@
 package app.nchu.tsc.exceptions;
 
+import com.netflix.graphql.types.errors.ErrorType;
 import com.netflix.graphql.types.errors.TypedGraphQLError;
 
 import java.util.HashMap;
-import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,39 +14,37 @@ import graphql.execution.DataFetcherExceptionHandlerParameters;
 import graphql.execution.DataFetcherExceptionHandlerResult;
 import graphql.GraphQLError;
 
-public class PermissionDeniedException extends RuntimeException {
+public class UnauthenticatedException extends RuntimeException {
 
-    private static final String msg = "The member with ID {} does not have the permission to perform this operation.";
-
-    public PermissionDeniedException(UUID member_id) {
-        super(msg.replace("{}", member_id.toString()));
+    public UnauthenticatedException() {
+        super("Please login first!");
     }
 
-    public PermissionDeniedException(String message) {
+    public UnauthenticatedException(String message) {
         super(message);
     }
 
-    public PermissionDeniedException(UUID member_id, Throwable cause) {
-        super(msg.replace("{}", member_id.toString()), cause);
+    public UnauthenticatedException(Throwable cause) {
+        super("Please login first!", cause);
     }
 
-    public PermissionDeniedException(String message, Throwable cause) {
+    public UnauthenticatedException(String message, Throwable cause) {
         super(message, cause);
     }
 
     @Component
-    public static class PermissionDeniedExceptionHandler implements DataFetcherExceptionHandler {
+    public static class UnauthenticatedExceptionHandler implements DataFetcherExceptionHandler {
 
         @Autowired
         private DefaultHandler defaultHandler;
 
         @Override
         public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters parameters) {
-            if (parameters.getException() instanceof PermissionDeniedException) {
+            if (parameters.getException() instanceof UnauthenticatedException) {
                 HashMap<String, Object> debugInfo = new HashMap<>();
                 debugInfo.put("hello", "world");
                 
-                GraphQLError error = TypedGraphQLError.newPermissionDeniedBuilder()
+                GraphQLError error = TypedGraphQLError.newBuilder().errorType(ErrorType.UNAUTHENTICATED)
                         .message(parameters.getException().getMessage())
                         .path(parameters.getPath()).location(parameters.getSourceLocation())
                         .debugInfo(debugInfo).debugUri("debugUri").build();

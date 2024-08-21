@@ -1,6 +1,9 @@
 type Query {
-    currentMember: GQL_Member! # 取得目前登入的社員資料
     availableCases: [GQL_Case!]! # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
+
+    # 登入後才可用
+    currentMember: GQL_Member! # 取得目前登入的社員資料
+    appliedCaseOrders: [GQL_CaseOrder!]! # 取得已申請的接案列表
 
     # 以下為幹部專用
     member(id: ID!): GQL_Member! # 取得社員資料
@@ -10,7 +13,7 @@ type Query {
     caseOrder(id: ID!): GQL_CaseOrder! # 取得接案資料
     caseOrders: [GQL_CaseOrder!]! # 取得接案列表
     bankRecord(id: ID!): GQL_BankRecord! # 取得社團記帳資料
-    bankRecords(startTime: String, endTime: String): [GQL_BankRecord!]! # 取得社團記帳列表
+    bankRecords: [GQL_BankRecord!]! # 取得社團記帳列表
     systemVariable(key: String!): GQL_SystemVariable! # 取得系統變數
     systemVariables: [GQL_SystemVariable!]! # 取得系統變數列表
 }
@@ -44,8 +47,8 @@ type Mutation {
     setCaseOrderNote(id: ID!, note: String!): GQL_CaseOrder! # 設定接案備註
 
     addBankRecord(data: GQL_BankRecordInput!): GQL_BankRecord! # 新增社團帳目
-    setBankRecord(id: ID!, data: GQL_BankRecordInput!): GQL_BankRecord! # 設定社團帳目
-    deleteBankRecord(id: ID!): GQL_BankRecord # 刪除社團帳目
+    setBankRecordData(id: ID!, data: GQL_BankRecordInput!): GQL_BankRecord! # 設定社團帳目
+    deleteBankRecord(id: ID!): Boolean! # 刪除社團帳目
 
     setSystemVariable(key: String!, value: String!): GQL_SystemVariable! # 設定系統變數
 }
@@ -271,7 +274,7 @@ type GQL_BankRecord {
     verified: Boolean! # 確認此筆記錄
     note: String # 備註
     
-    operator: GQL_Member # 經手人（確認者）
+    verifier: GQL_Member # 經手人（確認者）
 }
 
 enum GQL_SystemVariableType {
