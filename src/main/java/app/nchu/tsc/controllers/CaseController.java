@@ -1,5 +1,6 @@
 package app.nchu.tsc.controllers;
 
+import java.time.Year;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,12 +24,16 @@ import app.nchu.tsc.models.Case.WithdrawalMethod;
 import app.nchu.tsc.repositories.CaseRepository;
 import app.nchu.tsc.services.CaseService;
 import app.nchu.tsc.services.MemberService;
+import app.nchu.tsc.utilities.ROCTime;
 
 @DgsComponent
 public class CaseController {
 
     @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private CaseService caseService;
 
     @Autowired
     private MemberService memberService;
@@ -67,8 +72,15 @@ public class CaseController {
 
     @DgsMutation
     private GQL_Case addCase(@InputArgument GQL_CaseInput data) {
-        Case c = Case.builder()
-                .contactName(data.getContactName())
+        ROCTime time = ROCTime.now();
+        Year academicYear = Year.of((int)time.getAcademicYear());
+    
+        Case c = Case.builder().id(
+                    CaseID.builder()
+                    .academicYear(academicYear)
+                    .caseNumber(caseService.getNewCaseNumber(academicYear))
+                    .build()
+                ).contactName(data.getContactName())
                 .email(data.getEmail())
                 .phone(data.getPhone())
                 .address(data.getAddress())
@@ -84,7 +96,7 @@ public class CaseController {
                 .problem(data.getProblem())
                 .build();
 
-        return CaseService.toCase(c);
+        return CaseService.toCase(caseRepository.save(c));
     }
 
     @DgsMutation

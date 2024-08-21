@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.nchu.tsc.models.Member;
 import app.nchu.tsc.models.Redirecting;
+import app.nchu.tsc.repositories.RoleRepository;
 import app.nchu.tsc.services.MemberService;
 import app.nchu.tsc.services.RedirectingService;
-import app.nchu.tsc.services.RoleService;
 import app.nchu.tsc.services.SystemVariableService;
 import app.nchu.tsc.services.TSCSettings;
 import app.nchu.tsc.utilities.CookieBuilder;
@@ -33,7 +33,7 @@ public class AuthController {
     private MemberService memberService;
 
     @Autowired
-    private RoleService roleService;
+    private RoleRepository roleRepository;
 
     @Autowired
     private TSCSettings tscSettings;
@@ -55,7 +55,7 @@ public class AuthController {
                     .resID(resID)
                     .resToken(token)
                     .token(Random.generateRandomString(128))
-                    .role(roleService.getRoleByName(systemVariableService.get("default_role")))
+                    .role(roleRepository.findById(systemVariableService.get("default_role")).orElse(null))
                     .build()
             );
         } else {

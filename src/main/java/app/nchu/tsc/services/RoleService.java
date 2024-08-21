@@ -1,33 +1,49 @@
 package app.nchu.tsc.services;
 
+import java.util.HashMap;
+
 import app.nchu.tsc.codegen.types.GQL_Role;
 import app.nchu.tsc.models.Role;
-import app.nchu.tsc.repositories.RoleRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaUpdate;
+import jakarta.persistence.criteria.Root;
+import jakarta.transaction.Transactional;
 
-import java.util.List;
+import org.springframework.stereotype.Service;
 
 @Service
 public class RoleService {
 
-    @Autowired
-    private RoleRepository roleRepository;
+    @PersistenceContext
+    EntityManager entityManager;
 
-    public List<Role> getRoles() {
-        return roleRepository.findAll();
+    @Transactional
+    public int updateColumnById(String name, String column, boolean value) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaUpdate<Role> update = cb.createCriteriaUpdate(Role.class);
+        Root<Role> root = update.from(Role.class);
+
+        update.set(root.get(column), value);
+        update.where(cb.equal(root.get("name"), name));
+
+        return entityManager.createQuery(update).executeUpdate();
     }
 
-    public Role getRoleByName(String name) {
-        return roleRepository.findById(name).orElse(null);
-    }
+    @Transactional
+    public int updateColumnsById(String name, HashMap<String, Boolean> columns) {
+        CriteriaBuilder cb = entityManager.getCriteriaBuilder();
+        CriteriaUpdate<Role> update = cb.createCriteriaUpdate(Role.class);
+        Root<Role> root = update.from(Role.class);
 
-    public Role addRole(Role role) {
-        return roleRepository.save(role);
-    }
+        for (String column : columns.keySet()) {
+            update.set(root.get(column), columns.get(column));
+        }
 
-    public Role updateRole(Role role) {
-        return roleRepository.save(role);
+        update.where(cb.equal(root.get("name"), name));
+
+        return entityManager.createQuery(update).executeUpdate();
     }
 
     public static GQL_Role toRole(Role role) {

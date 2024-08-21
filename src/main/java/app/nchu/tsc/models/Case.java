@@ -33,8 +33,9 @@ public class Case {
     private LocalDateTime addTime = LocalDateTime.now();
 
     @Column(nullable = false)
+    @Builder.Default
     @Enumerated(EnumType.STRING)
-    private PostStatue postStatus;
+    private PostStatue postStatus = PostStatue.PENDING;
 
     @Column(nullable = false)
     private String contactName;

@@ -1,14 +1,37 @@
 package app.nchu.tsc.services;
 
+import java.time.Year;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import app.nchu.tsc.codegen.types.GQL_Case;
 import app.nchu.tsc.codegen.types.GQL_CasePostStatus;
 import app.nchu.tsc.codegen.types.GQL_CaseWithdrawalMethod;
 import app.nchu.tsc.models.Case;
+import app.nchu.tsc.models.CaseID;
+import app.nchu.tsc.repositories.CaseRepository;
 
 @Service
 public class CaseService {
+
+    @Autowired
+    private CaseRepository caseRepository;
+
+    public short getNewCaseNumber(Year academicYear) {
+        List<Case> cases = caseRepository.findAll();
+
+        short result = 0;
+        for(Case c : cases) {
+            CaseID id = c.getId();
+            if(id.getAcademicYear().equals(academicYear) && id.getCaseNumber() > result) {
+                result = id.getCaseNumber();
+            }
+        }
+
+        return (short)(result + 1);
+    }
 
     public static GQL_Case toCase(Case c) {
         GQL_Case result = new GQL_Case();

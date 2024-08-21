@@ -27,11 +27,13 @@ public class CaseOrder {
     @Column(nullable = false, columnDefinition = "DATETIME")
     private LocalDateTime orderTime = LocalDateTime.now();
 
-    @Column(nullable = false)
-    private UUID caseID;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Case caseID;
 
-    @Column(nullable = false)
-    private UUID memberID;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member memberID;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
@@ -45,6 +47,12 @@ public class CaseOrder {
 
     @Embedded
     private CaseOrderReport report;
+
+    @Column(nullable = false)
+    private boolean applying;
+
+    @Column(nullable = false)
+    private boolean accepted;
 
     @Column
     private String note;

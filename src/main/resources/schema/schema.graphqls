@@ -34,10 +34,13 @@ type Mutation {
     setMemberRole(id: ID!, roleName: String!): GQL_Member! # 設定社員身分
     setMemberBlocked(id: ID!, blocked: Boolean!): GQL_Member! # 設定社員黑名單
 
+    setRoleData(roleName: String!, data: [GQL_RolePairInput!]!): GQL_Role! # 設定身分組
+
     setCaseData(id: String!, data: GQL_CaseInput!): GQL_Case! # 設定案件資料
     setCaseNote(id: String!, note: String!): GQL_Case! # 設定案件備註
     setCasePostStatus(id: String!, postStatus: GQL_CasePostStatus!): GQL_Case! # 設定案件狀態
 
+    determineApproveCaseOrder(id: ID!, accept: Boolean!): GQL_CaseOrder! # 審核接案申請
     setCaseOrderNote(id: ID!, note: String!): GQL_CaseOrder! # 設定接案備註
 
     addBankRecord(data: GQL_BankRecordInput!): GQL_BankRecord! # 新增社團帳目
@@ -62,6 +65,11 @@ type GQL_URL {
 type GQL_QueryPair {
     key: String! # 鍵
     value: [String!]! # 值
+}
+
+input GQL_RolePairInput {
+    key: String! # 鍵
+    value: Boolean! # 值
 }
 
 type GQL_Role {
@@ -216,6 +224,8 @@ type GQL_CaseOrder {
     comment: String # 留言問題
 
     report: GQL_CaseOrderReport # 回報
+    applying: Boolean! # 是否正在申請接案
+    accepted: Boolean! # 是否被接受
     note: String # 備註
 }
 """ 

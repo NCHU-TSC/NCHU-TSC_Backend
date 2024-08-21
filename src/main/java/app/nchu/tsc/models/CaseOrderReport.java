@@ -22,14 +22,14 @@ public class CaseOrderReport implements Serializable {
     }
 
     @Builder.Default
-    @Column(nullable = false, columnDefinition = "DATETIME")
+    @Column(columnDefinition = "DATETIME")
     private LocalDateTime reportTime = LocalDateTime.now();
 
-    @Column(nullable = false)
+    @Column
     @Enumerated(EnumType.STRING)
     private Status reportStatus;
 
-    @Column(nullable = false)
+    @Column
     private String reportResult;
 
     @Column
