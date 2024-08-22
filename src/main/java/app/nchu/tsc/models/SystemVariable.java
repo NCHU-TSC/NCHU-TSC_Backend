@@ -22,10 +22,10 @@ public class SystemVariable {
     @Column(nullable = false, name = "`type`")
     private String type;
 
-    @Column(nullable = false)
+    @Column
     private String defaultValue;
 
-    @Column(nullable = false, name = "`description`")
-    private String description;
+    @Column(name = "`description`")
+    private String detail;
     
 }
