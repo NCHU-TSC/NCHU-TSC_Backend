@@ -32,7 +32,7 @@ public class Member {
     @Column(nullable = false)
     private String token;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(nullable = false)
     private Role role;
 

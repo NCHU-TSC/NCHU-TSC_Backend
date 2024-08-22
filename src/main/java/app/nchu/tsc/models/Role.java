@@ -29,6 +29,12 @@ public class Role {
     private String name;
 
     @Column(nullable = false)
+    private boolean needPayToJoin;
+
+    @Column(nullable = false)
+    private boolean systemAccount;
+
+    @Column(nullable = false)
     private boolean canViewLog;
 
     @Column(nullable = false)
@@ -66,8 +72,5 @@ public class Role {
 
     @Column(nullable = false)
     private boolean canModifySystemVariable;
-
-    @Column(nullable = false)
-    private boolean needPayToJoin;
     
 }

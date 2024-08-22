@@ -14,7 +14,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "id")
 @Entity
 public class BankRecord {
-
+/* 
     public enum Type {
         ACTIVITY,
         JOIN,
@@ -24,6 +24,12 @@ public class BankRecord {
         SPONSOR,
         FUND,
         OTHER
+    }
+ */
+    public enum Direction {
+        INCOME,
+        EXPENSE,
+        INTERNAL_TRANSFER
     }
 
     @Id
@@ -35,29 +41,31 @@ public class BankRecord {
     private LocalDateTime recordTime = LocalDateTime.now();
 
     @Column(nullable = false)
-    @Enumerated(EnumType.STRING)
-    private Type type;
+    private String type;
 
     @Column
     private String detail;
 
     @Column(nullable = false)
-    private Boolean direction; // true: income, false: expense
+    private Direction direction;
 
     @Column(nullable = false)
     private Integer amount;
 
-    @Column(nullable = false)
-    private UUID innerAccount;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member transferIn;
+
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member transferOut;
 
     @Column(nullable = false)
-    private UUID outerAccount;
+    private boolean verified;
 
-    @Column(nullable = false)
-    private Boolean verified;
-
-    @Column(nullable = false)
-    private UUID operator;
+    @ManyToOne
+    @JoinColumn(nullable = false)
+    private Member verifier;
 
     @Column
     private String note;
