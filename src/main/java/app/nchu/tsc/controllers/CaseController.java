@@ -40,6 +40,20 @@ public class CaseController {
     @Autowired
     private MemberService memberService;
 
+    @DgsQuery
+    private List<GQL_Case> availableCases() {
+        List<Case> cases = caseRepository.findAll();
+        List<GQL_Case> result = new ArrayList<GQL_Case>();
+
+        for(Case c : cases) {
+            if(caseService.isAvailable(c.getId())) {
+                result.add(CaseService.toCase(c));
+            }
+        }
+
+        return result;
+    }
+
     @DgsQuery(field = "case")
     private GQL_Case Case(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
