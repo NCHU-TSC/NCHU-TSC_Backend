@@ -1,235 +1,522 @@
 type Query {
-    availableCases: [GQL_Case!]! # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
+    ### 任何人皆可用
+    
+    # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
+    availableCases: [GQL_Case!]!
 
-    # 登入後才可用
-    currentMember: GQL_Member! # 取得目前登入的社員資料
-    appliedCaseOrders: [GQL_CaseOrder!]! # 取得已申請的接案列表
+    ### 以下登入後才可用
 
-    # 以下為幹部專用
-    member(id: ID!): GQL_Member! # 取得社員資料
-    members: [GQL_Member!]! # 取得社員列表
-    case(id: String!): GQL_Case # 取得案件資料
-    cases: [GQL_Case!]! # 取得案件列表
-    caseOrder(id: ID!): GQL_CaseOrder! # 取得接案資料
-    caseOrders: [GQL_CaseOrder!]! # 取得接案列表
-    bankRecord(id: ID!): GQL_BankRecord! # 取得社團記帳資料
-    bankRecords: [GQL_BankRecord!]! # 取得社團記帳列表
-    systemVariable(key: String!): String! # 取得系統變數
-    systemVariables: [GQL_SystemVariable!]! # 取得系統變數列表
+    # 取得目前登入的社員資料
+    currentMember: GQL_Member!
+
+     # 取得已申請的接案列表
+    appliedCaseOrders: [GQL_CaseOrder!]!
+
+    ### 以下為幹部專用
+
+    # 取得社員資料
+    member(id: ID!): GQL_Member! 
+
+    # 取得社員列表
+    members: [GQL_Member!]!
+
+    # 取得案件資料
+    case(id: String!): GQL_Case
+
+    # 取得案件列表
+    cases: [GQL_Case!]!
+
+    # 取得接案資料
+    caseOrder(id: ID!): GQL_CaseOrder!
+
+    # 取得接案列表
+    caseOrders: [GQL_CaseOrder!]!
+
+    # 取得社團記帳資料
+    bankRecord(id: ID!): GQL_BankRecord!
+
+    # 取得社團記帳列表
+    bankRecords: [GQL_BankRecord!]!
+
+    # 取得系統變數
+    systemVariable(key: String!): String!
+
+    # 取得系統變數列表
+    systemVariables: [GQL_SystemVariable!]!
 }
 
 type Mutation {
-    # 任何人皆可用
-    login(href: String!): GQL_URL! # 取得登入網址（href 為登入後要導向的網址）
-    addCase(data: GQL_CaseInput!): GQL_Case! # 新增案件
+    ### 任何人皆可用
 
-    # 登入後才可用
-    logout(href: String!): GQL_URL! # 取得登出網址（href 為登出後要導向的網址）
-    applyGeneralMember(data: GQL_MemberInput!): GQL_Member! # 申請入社
-    setCurrentMemberData(data: GQL_MemberInput!): GQL_Member # 設定社員資料
-    applyCase(data: GQL_CaseOrderInput!): GQL_CaseOrder! # 申請接案
-    reportCaseOrder(id: ID!, report: GQL_CaseOrderReportInput!): GQL_CaseOrder! # 回報接案
+    # 取得登入網址（href 為登入後要導向的網址）
+    login(href: String!): GQL_URL!
 
-    # 以下為幹部專用
-    determineJoinMember(id: ID!, accept: Boolean!): GQL_Member! # 審核入社申請
-    setMemberData(id: ID!, data: GQL_MemberInput!): GQL_Member! # 設定社員資料
-    setMemberNote(id: ID!, note: String!): GQL_Member! # 設定社員備註
-    setMemberRole(id: ID!, roleName: String!): GQL_Member! # 設定社員身分
-    setMemberBlocked(id: ID!, blocked: Boolean!): GQL_Member! # 設定社員黑名單
+    # 新增案件
+    addCase(data: GQL_CaseInput!): GQL_Case!
 
-    setRoleData(roleName: String!, data: [GQL_RolePairInput!]!): GQL_Role! # 設定身分組
+    ### 以下登入後才可用
 
-    setCaseData(id: String!, data: GQL_CaseInput!): GQL_Case! # 設定案件資料
-    setCaseNote(id: String!, note: String!): GQL_Case! # 設定案件備註
-    setCasePostStatus(id: String!, postStatus: GQL_CasePostStatus!): GQL_Case! # 設定案件狀態
+    # 取得登出網址（href 為登出後要導向的網址）
+    logout(href: String!): GQL_URL!
 
-    determineApproveCaseOrder(id: ID!, accept: Boolean!): GQL_CaseOrder! # 審核接案申請
-    setCaseOrderNote(id: ID!, note: String!): GQL_CaseOrder! # 設定接案備註
+    # 申請入社
+    applyGeneralMember(data: GQL_MemberInput!): GQL_Member!
 
-    addBankRecord(data: GQL_BankRecordInput!): GQL_BankRecord! # 新增社團帳目
-    setBankRecordData(id: ID!, data: GQL_BankRecordInput!): GQL_BankRecord! # 設定社團帳目
-    deleteBankRecord(id: ID!): Boolean! # 刪除社團帳目
+    # 設定社員資料
+    setCurrentMemberData(data: GQL_MemberInput!): GQL_Member
+    
+    # 申請接案
+    applyCase(data: GQL_CaseOrderInput!): GQL_CaseOrder!
+    
+    # 回報接案
+    reportCaseOrder(id: ID!, report: GQL_CaseOrderReportInput!): GQL_CaseOrder!
 
-    setSystemVariable(key: String!, value: String!): GQL_SystemVariable! # 設定系統變數
-}
+    ### 以下為幹部專用
 
-type GQL_URL {
-    href: String! # 完整網址
-    protocol: String! # 協定
-    host: String! # 主機
-    hostname: String! # 主機名稱
-    port: Int # 連接埠
-    pathname: String # 路徑
-    search: [GQL_QueryPair!] # 查詢
-    hash: String # 錨點
-    origin: String # 來源
+    # 審核入社申請
+    determineJoinMember(id: ID!, accept: Boolean!): GQL_Member!
+    
+    # 設定社員資料
+    setMemberData(id: ID!, data: GQL_MemberInput!): GQL_Member!
+    
+    # 設定社員備註
+    setMemberNote(id: ID!, note: String!): GQL_Member!
+
+    # 設定社員身分
+    setMemberRole(id: ID!, roleName: String!): GQL_Member!
+    
+    # 設定社員黑名單
+    setMemberBlocked(id: ID!, blocked: Boolean!): GQL_Member!
+
+    # 設定身分組
+    setRoleData(roleName: String!, data: [GQL_RolePairInput!]!): GQL_Role!
+
+    # 設定案件資料
+    setCaseData(id: String!, data: GQL_CaseInput!): GQL_Case!
+    
+    # 設定案件備註
+    setCaseNote(id: String!, note: String!): GQL_Case!
+    
+    # 設定案件狀態
+    setCasePostStatus(id: String!, postStatus: GQL_CasePostStatus!): GQL_Case!
+
+    # 審核接案申請
+    determineApproveCaseOrder(id: ID!, accept: Boolean!): GQL_CaseOrder!
+    
+    # 設定接案備註
+    setCaseOrderNote(id: ID!, note: String!): GQL_CaseOrder!
+
+    # 新增社團帳目
+    addBankRecord(data: GQL_BankRecordInput!): GQL_BankRecord!
+    
+    # 設定社團帳目
+    setBankRecordData(id: ID!, data: GQL_BankRecordInput!): GQL_BankRecord!
+    
+    # 刪除社團帳目
+    deleteBankRecord(id: ID!): Boolean!
+
+    # 新增系統變數
+    addSystemVariable(data: GQL_SystemVariableInput!): GQL_SystemVariable!
+
+    # 設定系統變數
+    setSystemVariable(key: String!, value: String!): GQL_SystemVariable!
 }
 
 type GQL_QueryPair {
-    key: String! # 鍵
-    value: [String!]! # 值
+    # 鍵
+    key: String!
+
+    # 值
+    value: [String!]!
+}
+
+type GQL_URL {
+    # 完整網址
+    href: String!
+
+    # 協定
+    protocol: String!
+
+    # 主機
+    host: String!
+
+    # 主機名稱
+    hostname: String!
+
+    # 連接埠
+    port: Int
+
+    # 路徑
+    pathname: String
+
+    # 查詢
+    search: [GQL_QueryPair!]
+
+    # 錨點
+    hash: String
+
+    # 來源
+    origin: String
 }
 
 input GQL_RolePairInput {
-    key: String! # 鍵
-    value: Boolean! # 值
+    # 鍵
+    key: String!
+
+    # 值
+    value: Boolean!
 }
 
 type GQL_Role {
-    name: String! # 身分組名稱
+    # 身分組名稱
+    name: String!
 
-    canViewLog: Boolean! # 可查看日誌
-    canModifyRole: Boolean! # 可修改身分組
-    canModifyMember: Boolean! # 可修改社員資料
-    canModifyCase: Boolean! # 可修改案件資料
-    canModifyCaseOrder: Boolean! # 可修改接案資料
-    canModifyBankRecord: Boolean! # 可修改社團記帳資料
+    # 需要繳費入社
+    needPayToJoin: Boolean!
+
+    # 系統帳戶
+    systemAccount: Boolean!
+
+    # 可查看日誌
+    canViewLog: Boolean!
+
+    # 可查看身分組
+    canViewRole: Boolean!
+
+    # 可修改身分組
+    canModifyRole: Boolean!
+
+    # 可查看社員資料
+    canViewMember: Boolean!
+
+    # 可修改社員資料
+    canModifyMember: Boolean!
+
+    # 可查看案件資料
+    canViewCase: Boolean!
+
+    # 可修改案件資料
+    canModifyCase: Boolean!
+
+    # 可查看接案資料
+    canViewCaseOrder: Boolean!
+
+    # 可修改接案資料
+    canModifyCaseOrder: Boolean!
+
+    # 可查看社團記帳資料
+    canViewBankRecord: Boolean!
+
+    # 可修改社團記帳資料
+    canModifyBankRecord: Boolean!
+
+    # 可查看系統變數
+    canViewSystemVariable: Boolean!
+
+    # 可修改系統變數
+    canModifySystemVariable: Boolean!
 }
 
 type GQL_InfoFromAuthServer {
-    id: ID! # ID in Auth Server
-    createTime: String! # 建立時間
+    # ID in Auth Server
+    id: ID!
 
-    # 由於安全因素，管理員查詢時才有結果
-    token: String # 資源存取令牌
+    # 建立時間
+    createTime: String!
 
-    number: String # 學號
-    name: String # 姓名
-    email: String # 電子郵件
-    validEmail: Boolean! # 電子郵件是否通過驗證
-    gender: String! # 性別
-    department: String # 系所
-    grade: String # 年級
-    photo: String # 頭像
+    # 資源存取令牌（由於安全因素，管理員查詢時才有結果）
+    token: String
+
+    # 學號
+    number: String
+
+    # 姓名
+    name: String
+
+    # 電子郵件
+    email: String
+
+    # 電子郵件是否通過驗證
+    validEmail: Boolean!
+
+    # 性別
+    gender: String!
+
+    # 系所
+    department: String
+
+    # 年級
+    grade: String
+
+    # 頭像
+    photo: String
 }
 
 input GQL_MemberInput {
-    phone: String # 電話
-    lineID: String # Line ID
-    expertise: String # 專長
-    dutyTime: String # 值班社員負責時段
+    # 電話
+    phone: String
+
+    # Line ID
+    lineID: String
+
+    # 專長
+    expertise: String
+
+    # 值班社員負責時段
+    dutyTime: String
 }
 
 type GQL_Member {
-    id: ID! # Member ID
-    role: GQL_Role! # 身分
+    # Member ID
+    id: ID!
 
+    # 身分
+    role: GQL_Role!
+
+    # 使用者令牌
     # 由於安全因素，管理員查詢時才有結果
     # 但不論如何皆會在登入時藉由 Set-Cookie 常駐在小型文字檔案中
     # 登出時清除
-    token: String # 使用者令牌
+    token: String
 
-    basicInfo: GQL_InfoFromAuthServer! # 基本資料
-    joinTime: String! # 加入時間
-    
-    phone: String # 電話
-    lineID: String # Line ID
-    expertise: String # 專長
-    dutyTime: String # 值班社員負責時段
+    # 基本資料
+    basicInfo: GQL_InfoFromAuthServer!
 
-    lastPayEntryTime: String # 上次繳費時間
-    applying: Boolean! # 是否正在申請入社
-    blocked: Boolean! # 是否在黑名單中
-    note: String # 備註
+    # 加入時間
+    joinTime: String!
+
+    # 電話
+    phone: String
+
+    # Line ID
+    lineID: String
+
+    # 專長
+    expertise: String
+
+    # 值班社員負責時段
+    dutyTime: String
+
+    # 上次繳費時間
+    lastPayEntryTime: String
+
+    # 是否正在申請入社
+    applying: Boolean!
+
+    # 是否在黑名單中
+    blocked: Boolean!
+
+    # 備註
+    note: String
 }
 
 enum GQL_CasePostStatus {
-    PENDING # 待處理
-    POSTED # 已發布
-    CLOSED # 已撤銷
+    # 待處理
+    PENDING
+
+    # 已發布
+    POSTED
+
+    # 已撤銷
+    CLOSED
 }
 
 enum GQL_CaseWithdrawalMethod {
-    AUTO # 自動撤銷
-    MANUAL # 聯絡撤銷
+    # 自動撤銷
+    AUTO
+
+    # 聯絡撤銷
+    MANUAL
 }
 
 enum GQL_CaseOrderStatus {
-    SUCCESS # 成功
-    FAILURE # 失敗
+    # 成功
+    SUCCESS
+
+    # 失敗
+    FAILURE
 }
 
 input GQL_CaseInput {
-    contactName: String! # 聯絡人姓名
-    email: String! # 聯絡人電子郵件
-    phone: String! # 聯絡人電話
-    address: String! # 家教地址
-    studentGender: String! # 學生性別
-    grade: String! # 學生年級
-    subjects: String! # 家教科目
-    tutorTime: String # 家教時間
-    tutorGenderPerference: String! # 家教性別偏好
-    salary: String # 薪資
-    conditions: String # 其他條件
-    withdrawalMethod: GQL_CaseWithdrawalMethod! # 撤銷方式
-    accessMethod: String! # 如何知道本社
-    problem: String # 其他問題
+    # 聯絡人姓名
+    contactName: String!
+
+    # 聯絡人電子郵件
+    email: String!
+
+    # 聯絡人電話
+    phone: String!
+
+    # 家教地址
+    address: String!
+
+    # 學生性別
+    studentGender: String!
+
+    # 學生年級
+    grade: String!
+
+    # 家教科目
+    subjects: String!
+
+    # 家教時間
+    tutorTime: String
+
+    # 家教性別偏好
+    tutorGenderPerference: String!
+
+    # 薪資
+    salary: String
+
+    # 其他條件
+    conditions: String
+
+    # 撤銷方式
+    withdrawalMethod: GQL_CaseWithdrawalMethod!
+
+    # 如何知道本社
+    accessMethod: String!
+
+    # 其他問題
+    problem: String
 }
 
 type GQL_Case {
-    id: String! # Case ID
-    addTime: String! # 新增時間
+    # Case ID
+    id: String!
 
-    postStatus: GQL_CasePostStatus! # 案件狀態
+    # 新增時間
+    addTime: String!
 
-    contactName: String! # 聯絡人姓名
-    email: String! # 聯絡人電子郵件
-    phone: String! # 聯絡人電話
-    address: String! # 家教地址
-    studentGender: String! # 學生性別
-    grade: String! # 學生年級
-    subjects: String! # 家教科目
-    tutorTime: String # 家教時間
-    tutorGenderPerference: String! # 家教性別偏好
-    salary: String # 薪資
-    conditions: String # 其他條件
-    withdrawalMethod: GQL_CaseWithdrawalMethod! # 撤銷方式
-    accessMethod: String! # 如何知道本社
-    problem: String # 其他問題
-    
-    note: String # 備註
+    # 案件狀態
+    postStatus: GQL_CasePostStatus!
+
+    # 聯絡人姓名
+    contactName: String!
+
+    # 聯絡人電子郵件
+    email: String!
+
+    # 聯絡人電話
+    phone: String!
+
+    # 家教地址
+    address: String!
+
+    # 學生性別
+    studentGender: String!
+
+    # 學生年級
+    grade: String!
+
+    # 家教科目
+    subjects: String!
+
+    # 家教時間
+    tutorTime: String
+
+    # 家教性別偏好
+    tutorGenderPerference: String!
+
+    # 薪資
+    salary: String
+
+    # 其他條件
+    conditions: String
+
+    # 撤銷方式
+    withdrawalMethod: GQL_CaseWithdrawalMethod!
+
+    # 如何知道本社
+    accessMethod: String!
+
+    # 其他問題
+    problem: String
+
+    # 備註
+    note: String
 }
 
 input GQL_CaseOrderReportInput {
-    status: GQL_CaseOrderStatus! # 回報結果
-    result: String! # 成功的薪水或失敗的原因
-    comment: String # 留言問題
+    # 回報結果
+    status: GQL_CaseOrderStatus!
+
+    # 成功的薪水或失敗的原因
+    result: String!
+
+    # 留言問題
+    comment: String
 }
 
 type GQL_CaseOrderReport {
-    time: String! # 回報時間
-    
-    status: GQL_CaseOrderStatus! # 回報結果
-    result: String! # 成功的薪水或失敗的原因
-    comment: String # 留言問題
+    # 回報時間
+    time: String!
+
+    # 回報結果
+    status: GQL_CaseOrderStatus!
+
+    # 成功的薪水或失敗的原因
+    result: String!
+
+    # 留言問題
+    comment: String
 }
 
 enum GQL_CaseOrderApplyMethod {
-    ONLINE # 線上接案
-    OFFLINE # 值班地點或幹部接案
+    # 線上接案
+    ONLINE
+
+    # 值班地點或幹部接案
+    OFFLINE
 }
 
 input GQL_CaseOrderInput {
-    case: String! # 案件 ID
-    applyMethod: GQL_CaseOrderApplyMethod! # 申請方式
-    bankAccount: String # 銀行帳號（僅線上接案）
-    comment: String # 留言問題
+    # 案件 ID
+    case: String!
+
+    # 申請方式
+    applyMethod: GQL_CaseOrderApplyMethod!
+
+    # 銀行帳號（僅線上接案）
+    bankAccount: String
+
+    # 留言問題
+    comment: String
 }
 
 type GQL_CaseOrder {
-    id: ID! # Order ID
-    orderTime: String! # 接案時間
-    member: GQL_Member! # 接案社員
-    
-    case: GQL_Case! # 案件
-    applyMethod: GQL_CaseOrderApplyMethod! # 申請方式
-    bankAccount: String # 銀行帳號（僅線上接案）
-    comment: String # 留言問題
+    # Order ID
+    id: ID!
 
-    report: GQL_CaseOrderReport # 回報
-    applying: Boolean! # 是否正在申請接案
-    accepted: Boolean! # 是否被接受
-    note: String # 備註
+    # 接案時間
+    orderTime: String!
+
+    # 接案社員
+    member: GQL_Member!
+
+    # 案件
+    case: GQL_Case!
+
+    # 申請方式
+    applyMethod: GQL_CaseOrderApplyMethod!
+
+    # 銀行帳號（僅線上接案）
+    bankAccount: String
+
+    # 留言問題
+    comment: String
+
+    # 回報
+    report: GQL_CaseOrderReport
+
+    # 是否正在申請接案
+    applying: Boolean!
+
+    # 是否被接受
+    accepted: Boolean!
+
+    # 備註
+    note: String
 }
 """ 
 enum GQL_BankRecordType {
@@ -244,50 +531,110 @@ enum GQL_BankRecordType {
 }
  """
 enum GQL_BankRecordDirection {
-    INCOME # 收入
-    EXPENSE # 支出
-    INTERNAL_TRANSFER # 內部轉帳
+    # 收入
+    INCOME
+
+    # 支出
+    EXPENSE
+
+    # 內部轉帳
+    INTERNAL_TRANSFER
 }
 
 input GQL_BankRecordInput {
-    recordTime: String! # 記錄時間
-    type: String! # 類型
-    detail: String # 詳細內容
-    direction: GQL_BankRecordDirection! # 進出帳
-    amount: Int! # 金額
-    transferIn: ID! # 轉入給誰 ID
-    transferOut: ID! # 轉出給誰 ID
-    verified: Boolean! # 確認此筆記錄
-    note: String # 備註
+    # 記錄時間
+    recordTime: String!
+
+    # 類型
+    type: String!
+
+    # 詳細內容
+    detail: String
+
+    # 進出帳
+    direction: GQL_BankRecordDirection!
+
+    # 金額
+    amount: Int!
+
+    # 轉入給誰 ID
+    transferIn: ID!
+
+    # 轉出給誰 ID
+    transferOut: ID!
+
+    # 確認此筆記錄
+    verified: Boolean!
+
+    # 備註
+    note: String
 }
 
 type GQL_BankRecord {
-    id: ID! # Bank Record ID
-    
-    recordTime: String! # 記錄時間
-    type: String! # 類型
-    detail: String # 詳細內容
-    direction: GQL_BankRecordDirection! # 進出帳
-    amount: Int! # 金額
-    transferIn: GQL_Member! # 轉入給誰
-    transferOut: GQL_Member! # 轉出給誰
-    verified: Boolean! # 確認此筆記錄
-    note: String # 備註
-    
-    verifier: GQL_Member # 經手人（確認者）
+    # Bank Record ID
+    id: ID!
+
+    # 記錄時間
+    recordTime: String!
+
+    # 類型
+    type: String!
+
+    # 詳細內容
+    detail: String
+
+    # 進出帳
+    direction: GQL_BankRecordDirection!
+
+    # 金額
+    amount: Int!
+
+    # 轉入給誰
+    transferIn: GQL_Member!
+
+    # 轉出給誰
+    transferOut: GQL_Member!
+
+    # 確認此筆記錄
+    verified: Boolean!
+
+    # 備註
+    note: String
+
+    # 經手人（確認者）
+    verifier: GQL_Member
 }
 
-enum GQL_SystemVariableType {
-    STRING
-    INTEGER
-    BOOLEAN
-    ZONEDDATETIME
+input GQL_SystemVariableInput {
+    # 鍵
+    key: String!
+
+    # 值
+    value: String!
+
+    # 類型
+    type: String!
+
+    # 預設值
+    defaultValue: String
+
+    # 詳細說明
+    detail: String
 }
 
 type GQL_SystemVariable {
-    key: String! # 鍵
-    value: String! # 值
-    type: String! # 類型
-    defaultValue: String! # 預設值
-    detail: String # 詳細說明
+    # 鍵
+    key: String!
+
+    # 值
+    value: String!
+
+    # 類型
+    type: String!
+
+    # 預設值
+    defaultValue: String
+
+    # 詳細說明
+    detail: String
 }

@@ -11,6 +11,9 @@ import app.nchu.tsc.codegen.types.GQL_CasePostStatus;
 import app.nchu.tsc.codegen.types.GQL_CaseWithdrawalMethod;
 import app.nchu.tsc.models.Case;
 import app.nchu.tsc.models.CaseID;
+import app.nchu.tsc.models.CaseOrder;
+import app.nchu.tsc.models.CaseOrderReport;
+import app.nchu.tsc.repositories.CaseOrderRepository;
 import app.nchu.tsc.repositories.CaseRepository;
 
 @Service
@@ -18,6 +21,9 @@ public class CaseService {
 
     @Autowired
     private CaseRepository caseRepository;
+
+    @Autowired
+    private CaseOrderRepository caseOrderRepository;
 
     public short getNewCaseNumber(Year academicYear) {
         List<Case> cases = caseRepository.findAll();
@@ -31,6 +37,22 @@ public class CaseService {
         }
 
         return (short)(result + 1);
+    }
+
+    public boolean isAvailable(CaseID id) {
+        Case c = caseRepository.findById(id).get();
+        List<CaseOrder> orders = caseOrderRepository.findByCaseID(id);
+
+        boolean existSuccessReport = false;
+        for(CaseOrder o : orders) {
+            CaseOrderReport report = o.getReport();
+            if(o != null && report.getReportStatus() == CaseOrderReport.Status.SUCCESS) {
+                existSuccessReport = true;
+                break;
+            }
+        }
+
+        return c.getPostStatus() == Case.PostStatue.POSTED && !existSuccessReport;
     }
 
     public static GQL_Case toCase(Case c) {

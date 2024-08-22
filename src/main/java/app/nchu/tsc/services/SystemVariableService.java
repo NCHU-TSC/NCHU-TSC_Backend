@@ -28,18 +28,24 @@ public class SystemVariableService {
         ).getValue();
     }
 
-    public static SystemVariable toSystemVariable(GQL_SystemVariable systemVariable) {
+    public static SystemVariable toSystemVariable(GQL_SystemVariable sv) {
         return SystemVariable.builder()
-            .key(systemVariable.getKey())
-            .value(systemVariable.getValue())
+            .key(sv.getKey())
+            .value(sv.getValue())
+            .type(sv.getType())
+            .defaultValue(sv.getDefaultValue())
+            .detail(sv.getDetail())
             .build();
     }
 
-    public static GQL_SystemVariable toSystemVariable(SystemVariable systemVariable) {
+    public static GQL_SystemVariable toSystemVariable(SystemVariable sv) {
         GQL_SystemVariable result = new GQL_SystemVariable();
 
-        result.setKey(systemVariable.getKey());
-        result.setValue(systemVariable.getValue());
+        result.setKey(sv.getKey());
+        result.setValue(sv.getValue());
+        result.setType(sv.getType());
+        result.setDefaultValue(sv.getDefaultValue());
+        result.setDetail(sv.getDetail());
 
         return result;
     }

@@ -16,6 +16,8 @@ import app.nchu.tsc.codegen.types.GQL_CaseOrder;
 import app.nchu.tsc.codegen.types.GQL_CaseOrderInput;
 import app.nchu.tsc.codegen.types.GQL_CaseOrderReportInput;
 import app.nchu.tsc.exceptions.PermissionDeniedException;
+import app.nchu.tsc.exceptions.RequestedResourceNotFound;
+import app.nchu.tsc.exceptions.UnauthenticatedException;
 import app.nchu.tsc.models.CaseID;
 import app.nchu.tsc.models.CaseOrder;
 import app.nchu.tsc.models.CaseOrderReport;
@@ -44,9 +46,7 @@ public class CaseOrderController {
     @DgsQuery
     private List<GQL_CaseOrder> appliedCaseOrders(@CookieValue UUID member_id, @CookieValue String member_token) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !memberService.canApplyCase(member_id)) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
         List<GQL_CaseOrder> result = new ArrayList<GQL_CaseOrder>();
         List<CaseOrder> caseOrders = caseOrderRepository.findByMemberID(operator);
@@ -60,19 +60,22 @@ public class CaseOrderController {
     @DgsQuery
     private GQL_CaseOrder caseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanViewCaseOrder()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        return caseOrderService.toCaseOrder(caseOrderRepository.findById(id).orElse(null));
+        if(!operator.getRole().isCanViewCaseOrder()) throw new PermissionDeniedException(member_id);
+
+        CaseOrder co = caseOrderRepository.findById(id).orElse(null);
+        if(co == null) throw new RequestedResourceNotFound(CaseOrder.class.getSimpleName(), id.toString());
+
+        return caseOrderService.toCaseOrder(co);
     }
 
     @DgsQuery
     private List<GQL_CaseOrder> caseOrders(@CookieValue UUID member_id, @CookieValue String member_token) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanViewCaseOrder()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanViewCaseOrder()) throw new PermissionDeniedException(member_id);
 
         List<GQL_CaseOrder> result = new ArrayList<GQL_CaseOrder>();
         List<CaseOrder> caseOrders = caseOrderRepository.findAll();
@@ -86,9 +89,9 @@ public class CaseOrderController {
     @DgsMutation
     private GQL_CaseOrder applyCase(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument GQL_CaseOrderInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !memberService.canApplyCase(member_id)) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!memberService.canApplyCase(member_id)) throw new PermissionDeniedException(member_id);
 
         CaseOrder co = new CaseOrder();
         co.setMemberID(operator);
@@ -105,14 +108,10 @@ public class CaseOrderController {
     @DgsMutation
     private GQL_CaseOrder reportCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument GQL_CaseOrderReportInput report) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
         CaseOrder co = caseOrderRepository.findById(id).orElse(null);
-        if(co == null) {
-            return null;
-        }
+        if(co == null) throw new RequestedResourceNotFound(CaseOrder.class.getSimpleName(), id.toString());
 
         co.setReport(
             CaseOrderReport.builder()
@@ -128,21 +127,15 @@ public class CaseOrderController {
     @DgsMutation
     private GQL_CaseOrder determineApproveCaseOrder(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument Boolean accept) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyCaseOrder()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyCaseOrder()) throw new PermissionDeniedException(member_id);
 
         CaseOrder co = caseOrderRepository.findById(id).orElse(null);
-        if(co == null) {
-            return null;
-        }
+        if(co == null) throw new RequestedResourceNotFound(CaseOrder.class.getSimpleName(), id.toString());
 
         co.setApplying(false);
-        if(accept) {
-            co.setAccepted(true);
-        } else {
-            co.setAccepted(false);
-        }
+        co.setAccepted(accept);
 
         return caseOrderService.toCaseOrder(caseOrderRepository.save(co));
     }
@@ -150,14 +143,12 @@ public class CaseOrderController {
     @DgsMutation
     private GQL_CaseOrder setCaseOrderNote(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument String note) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyCaseOrder()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyCaseOrder()) throw new PermissionDeniedException(member_id);
 
         CaseOrder co = caseOrderRepository.findById(id).orElse(null);
-        if(co == null) {
-            return null;
-        }
+        if(co == null) throw new RequestedResourceNotFound(CaseOrder.class.getSimpleName(), id.toString());
 
         co.setNote(note);
 

@@ -50,11 +50,18 @@ public class RoleService {
         GQL_Role result = new GQL_Role();
 
         result.setName(role.getName());
+        result.setNeedPayToJoin(role.isNeedPayToJoin());
+        result.setSystemAccount(role.isSystemAccount());
         result.setCanViewLog(role.isCanViewLog());
+        result.setCanViewRole(role.isCanViewRole());
         result.setCanModifyRole(role.isCanModifyRole());
+        result.setCanViewMember(role.isCanViewMember());
         result.setCanModifyMember(role.isCanModifyMember());
+        result.setCanViewCase(role.isCanViewCase());
         result.setCanModifyCase(role.isCanModifyCase());
+        result.setCanViewCaseOrder(role.isCanViewCaseOrder());
         result.setCanModifyCaseOrder(role.isCanModifyCaseOrder());
+        result.setCanViewBankRecord(role.isCanViewBankRecord());
         result.setCanModifyBankRecord(role.isCanModifyBankRecord());
 
         return result;
@@ -63,12 +70,14 @@ public class RoleService {
     public static Role toRole(GQL_Role role) {
         return Role.builder()
                 .name(role.getName())
+                .needPayToJoin(role.getNeedPayToJoin())
+                .systemAccount(role.getSystemAccount())
                 .canViewLog(role.getCanViewLog())
-                .canModifyRole(role.getCanModifyRole())
-                .canModifyMember(role.getCanModifyMember())
-                .canModifyCase(role.getCanModifyCase())
-                .canModifyCaseOrder(role.getCanModifyCaseOrder())
-                .canModifyBankRecord(role.getCanModifyBankRecord())
+                .canViewRole(role.getCanViewRole()).canModifyRole(role.getCanModifyRole())
+                .canViewMember(role.getCanViewMember()).canModifyMember(role.getCanModifyMember())
+                .canViewCase(role.getCanViewCase()).canModifyCase(role.getCanModifyCase())
+                .canViewCaseOrder(role.getCanViewCaseOrder()).canModifyCaseOrder(role.getCanModifyCaseOrder())
+                .canViewBankRecord(role.getCanViewBankRecord()).canModifyBankRecord(role.getCanModifyBankRecord())
                 .build();
     }
 

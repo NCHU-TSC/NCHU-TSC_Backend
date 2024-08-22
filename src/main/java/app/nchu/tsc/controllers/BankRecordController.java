@@ -36,19 +36,13 @@ public class BankRecordController {
     @DgsQuery
     private GQL_BankRecord bankRecord(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new UnauthenticatedException();
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        if(!operator.getRole().isCanViewBankRecord()) {
-            throw new PermissionDeniedException(member_id);
-        }
+        if(!operator.getRole().isCanViewBankRecord()) throw new PermissionDeniedException(member_id);
 
         BankRecord bankRecord = bankRecordRepository.findById(id).orElse(null);
 
-        if(bankRecord == null) {
-            throw new RequestedResourceNotFound("Bank Record", id.toString());
-        }
+        if(bankRecord == null) throw new RequestedResourceNotFound(BankRecord.class.getSimpleName(), id.toString());
 
         return bankRecordService.toBankRecord(bankRecord);
     }
@@ -56,13 +50,9 @@ public class BankRecordController {
     @DgsQuery
     private List<GQL_BankRecord> bankRecords(@CookieValue UUID member_id, @CookieValue String member_token) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new UnauthenticatedException();
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        if(!operator.getRole().isCanViewBankRecord()) {
-            throw new PermissionDeniedException(member_id);
-        }
+        if(!operator.getRole().isCanViewBankRecord()) throw new PermissionDeniedException(member_id);
 
         List<GQL_BankRecord> result = new ArrayList<GQL_BankRecord>();
 
@@ -76,13 +66,9 @@ public class BankRecordController {
     @DgsMutation
     private GQL_BankRecord addBankRecord(@CookieValue UUID member_id, @CookieValue String member_token, GQL_BankRecordInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new UnauthenticatedException();
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        if(!operator.getRole().isCanModifyBankRecord()) {
-            throw new PermissionDeniedException(member_id);
-        }
+        if(!operator.getRole().isCanModifyBankRecord()) throw new PermissionDeniedException(member_id);
 
         return bankRecordService.toBankRecord(bankRecordService.addBankRecord(data, operator));
     }
@@ -90,13 +76,9 @@ public class BankRecordController {
     @DgsMutation
     private GQL_BankRecord setBankRecordData(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id, @InputArgument GQL_BankRecordInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new UnauthenticatedException();
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        if(!operator.getRole().isCanModifyBankRecord()) {
-            throw new PermissionDeniedException(member_id);
-        }
+        if(!operator.getRole().isCanModifyBankRecord()) throw new PermissionDeniedException(member_id);
 
         return bankRecordService.toBankRecord(bankRecordService.updateBankRecord(id, data, operator));
     }
@@ -104,13 +86,9 @@ public class BankRecordController {
     @DgsMutation
     private boolean deleteBankRecord(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument UUID id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null) {
-            throw new UnauthenticatedException();
-        }
+        if(operator == null) throw new UnauthenticatedException();
 
-        if(!operator.getRole().isCanModifyBankRecord()) {
-            throw new PermissionDeniedException(member_id);
-        }
+        if(!operator.getRole().isCanModifyBankRecord()) throw new PermissionDeniedException(member_id);
 
         bankRecordRepository.deleteById(id);
         return true;
