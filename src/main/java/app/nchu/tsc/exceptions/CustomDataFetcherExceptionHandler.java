@@ -46,7 +46,7 @@ public class CustomDataFetcherExceptionHandler  implements DataFetcherExceptionH
             HashMap<String, Object> debugInfo = new HashMap<>();
             debugInfo.put("hello", "world");
             
-            GraphQLError error = TypedGraphQLError.newNotFoundBuilder().errorDetail(ErrorDetail.Common.MISSING_RESOURCE)
+            GraphQLError error = TypedGraphQLError.newNotFoundBuilder().errorDetail(ErrorDetail.Common.FIELD_NOT_FOUND)
                     .message(parameters.getException().getMessage())
                     .path(parameters.getPath()).location(parameters.getSourceLocation())
                     .debugInfo(debugInfo).debugUri("debugUri").build();

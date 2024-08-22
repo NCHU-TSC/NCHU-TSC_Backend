@@ -11,7 +11,7 @@ import lombok.*;
 @EqualsAndHashCode(of = "name")
 @Entity
 public class Role {
-
+    /* 
     public enum Name {
         SYSTEM_ACCOUNT, // 系統帳號
         PRESIDENT, // 社長
@@ -24,7 +24,7 @@ public class Role {
         GENERAL_MEMBER, // 一般社員
         GUEST // 訪客
     }
-    
+     */
     @Id
     private String name;
 

@@ -14,6 +14,8 @@ import com.netflix.graphql.dgs.InputArgument;
 import app.nchu.tsc.codegen.types.GQL_Role;
 import app.nchu.tsc.codegen.types.GQL_RolePairInput;
 import app.nchu.tsc.exceptions.PermissionDeniedException;
+import app.nchu.tsc.exceptions.RequestedResourceNotFound;
+import app.nchu.tsc.exceptions.UnauthenticatedException;
 import app.nchu.tsc.models.Member;
 import app.nchu.tsc.repositories.RoleRepository;
 import app.nchu.tsc.services.MemberService;
@@ -34,9 +36,11 @@ public class RoleController {
     @DgsMutation
     private GQL_Role setRoleData(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String roleName, @InputArgument List<GQL_RolePairInput> data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyRole()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyRole()) throw new PermissionDeniedException(member_id);
+
+        if(roleRepository.findById(roleName).isEmpty()) throw new RequestedResourceNotFound("Role", roleName);
 
         HashMap<String, Boolean> permissions = new HashMap<String, Boolean>();
         for(GQL_RolePairInput pair : data) {

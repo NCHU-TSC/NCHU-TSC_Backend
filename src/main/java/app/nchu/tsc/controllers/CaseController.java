@@ -17,6 +17,8 @@ import app.nchu.tsc.codegen.types.GQL_Case;
 import app.nchu.tsc.codegen.types.GQL_CaseInput;
 import app.nchu.tsc.codegen.types.GQL_CasePostStatus;
 import app.nchu.tsc.exceptions.PermissionDeniedException;
+import app.nchu.tsc.exceptions.RequestedResourceNotFound;
+import app.nchu.tsc.exceptions.UnauthenticatedException;
 import app.nchu.tsc.models.Case;
 import app.nchu.tsc.models.CaseID;
 import app.nchu.tsc.models.Member;
@@ -41,14 +43,12 @@ public class CaseController {
     @DgsQuery(field = "case")
     private GQL_Case Case(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String id) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanViewCase()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanViewCase()) throw new PermissionDeniedException(member_id);
 
         Case c = caseRepository.findById(CaseID.parse(id)).orElse(null);
-        if(c == null) {
-            return null;
-        }
+        if(c == null) throw new RequestedResourceNotFound(Case.class.getSimpleName(), id);
 
         return CaseService.toCase(c);
     }
@@ -56,9 +56,9 @@ public class CaseController {
     @DgsQuery
     private List<GQL_Case> cases(@CookieValue UUID member_id, @CookieValue String member_token) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanViewCase()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanViewCase()) throw new PermissionDeniedException(member_id);
 
         List<Case> cases = caseRepository.findAll();
         List<GQL_Case> result = new ArrayList<GQL_Case>();
@@ -102,14 +102,12 @@ public class CaseController {
     @DgsMutation
     private GQL_Case setCasePostStatus(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String id, @InputArgument GQL_CasePostStatus postStatus) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyCase()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyCase()) throw new PermissionDeniedException(member_id);
 
         Case c = caseRepository.findById(CaseID.parse(id)).orElse(null);
-        if(c == null) {
-            return null;
-        }
+        if(c == null) throw new RequestedResourceNotFound(Case.class.getSimpleName(), id);
 
         c.setPostStatus(Case.PostStatue.valueOf(postStatus.toString()));
         return CaseService.toCase(caseRepository.save(c));
@@ -118,14 +116,12 @@ public class CaseController {
     @DgsMutation
     private GQL_Case setCaseData(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String id, @InputArgument GQL_CaseInput data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyCase()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyCase()) throw new PermissionDeniedException(member_id);
 
         Case c = caseRepository.findById(CaseID.parse(id)).orElse(null);
-        if(c == null) {
-            return null;
-        }
+        if(c == null) throw new RequestedResourceNotFound(Case.class.getSimpleName(), id);
 
         c.setContactName(data.getContactName());
         c.setEmail(data.getEmail());
@@ -148,14 +144,12 @@ public class CaseController {
     @DgsMutation
     private GQL_Case setCaseNote(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String id, @InputArgument String note) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
-        if(operator == null || !operator.getRole().isCanModifyCase()) {
-            throw new PermissionDeniedException("Permission Denied");
-        }
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyCase()) throw new PermissionDeniedException(member_id);
 
         Case c = caseRepository.findById(CaseID.parse(id)).orElse(null);
-        if(c == null) {
-            return null;
-        }
+        if(c == null) throw new RequestedResourceNotFound(Case.class.getSimpleName(), id);
 
         c.setNote(note);
         return CaseService.toCase(caseRepository.save(c));

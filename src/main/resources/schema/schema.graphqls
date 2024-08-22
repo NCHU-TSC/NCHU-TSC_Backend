@@ -171,23 +171,50 @@ type GQL_Role {
     # 身分組名稱
     name: String!
 
+    # 需要繳費入社
+    needPayToJoin: Boolean!
+
+    # 系統帳戶
+    systemAccount: Boolean!
+
     # 可查看日誌
     canViewLog: Boolean!
+
+    # 可查看身分組
+    canViewRole: Boolean!
 
     # 可修改身分組
     canModifyRole: Boolean!
 
+    # 可查看社員資料
+    canViewMember: Boolean!
+
     # 可修改社員資料
     canModifyMember: Boolean!
+
+    # 可查看案件資料
+    canViewCase: Boolean!
 
     # 可修改案件資料
     canModifyCase: Boolean!
 
+    # 可查看接案資料
+    canViewCaseOrder: Boolean!
+
     # 可修改接案資料
     canModifyCaseOrder: Boolean!
 
+    # 可查看社團記帳資料
+    canViewBankRecord: Boolean!
+
     # 可修改社團記帳資料
     canModifyBankRecord: Boolean!
+
+    # 可查看系統變數
+    canViewSystemVariable: Boolean!
+
+    # 可修改系統變數
+    canModifySystemVariable: Boolean!
 }
 
 type GQL_InfoFromAuthServer {
