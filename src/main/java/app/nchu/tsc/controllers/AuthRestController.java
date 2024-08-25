@@ -39,7 +39,7 @@ public class AuthRestController {
     private TSCSettings tscSettings;
 
     @GetMapping("/callback")
-    private void callback(@RequestParam String state, @RequestParam String id, @RequestParam String token, HttpServletResponse response) {
+    private void callback(@RequestParam String state, @RequestParam String user_id, @RequestParam String res_token, HttpServletResponse response) {
         Redirecting r = redirectingService.getRedirecting(state);
 
         if (r == null || redirectingService.isExpired(r)) {
@@ -47,31 +47,31 @@ public class AuthRestController {
             return;
         }
 
-        UUID resID = UUID.fromString(id);
+        UUID resID = UUID.fromString(user_id);
         Member member;
         if (memberService.isMemberExistsByResID(resID)) {
+            member = memberService.getMemberByResID(resID);
+        } else {
             member = memberService.createMember(
                 Member.builder()
                     .resID(resID)
-                    .resToken(token)
+                    .resToken(res_token)
                     .token(Random.generateRandomString(128))
                     .role(roleRepository.findById(systemVariableService.get("default_role")).orElse(null))
                     .build()
             );
-        } else {
-            member = memberService.getMemberByResID(resID);
         }
 
         response.addCookie(
             (new CookieBuilder("member_id", member.getId().toString()))
                 .httpOnly(false).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+                .domain(tscSettings.getFrontendURL(false, false)).build()
         );
 
         response.addCookie(
             (new CookieBuilder("member_token", member.getToken()))
                 .httpOnly(true).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+                .domain(tscSettings.getFrontendURL(false, false)).build()
         );
 
         response.setHeader("Location", r.getHref());

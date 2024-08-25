@@ -15,6 +15,9 @@ public class AuthService {
     @Autowired
     TSCSettings tscSettings;
 
+    @Autowired
+    Logger logger;
+
     private Authenticator authenticator;
     private UserInfoFetcher userInfoFetcher;
 
@@ -35,6 +38,8 @@ public class AuthService {
     public static GQL_InfoFromAuthServer toUserInfo(UserInfo userInfo) {
         GQL_InfoFromAuthServer result = new GQL_InfoFromAuthServer();
 
+        result.setId(userInfo.getId());
+        result.setToken(userInfo.getToken());
         result.setNumber(userInfo.getLoginId());
         result.setName(userInfo.getName());
         result.setEmail(userInfo.getEmail());

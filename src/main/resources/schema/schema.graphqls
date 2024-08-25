@@ -221,9 +221,6 @@ type GQL_InfoFromAuthServer {
     # ID in Auth Server
     id: ID!
 
-    # 建立時間
-    createTime: String!
-
     # 資源存取令牌（由於安全因素，管理員查詢時才有結果）
     token: String
 
@@ -280,7 +277,7 @@ type GQL_Member {
     token: String
 
     # 基本資料
-    basicInfo: GQL_InfoFromAuthServer!
+    basicInfo: GQL_InfoFromAuthServer
 
     # 加入時間
     joinTime: String!

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import app.nchu.tsc.models.Redirecting;
 import app.nchu.tsc.repositories.RedirectingRepository;
+import app.nchu.tsc.utilities.Random;
 
 @Service
 public class RedirectingService {
@@ -23,6 +24,7 @@ public class RedirectingService {
         );
 
         Redirecting redirecting = Redirecting.builder()
+            .id(Random.generateRandomString(128))
             .href(href)
             .expires(expiresAt)
             .used(false)
