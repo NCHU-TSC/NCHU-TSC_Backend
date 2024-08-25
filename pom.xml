@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>app.nchu</groupId>
 	<artifactId>tsc</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>0.0.2</version>
 	<name>Tutoring Service Center</name>
 	<description>Backend of NCHU TSC</description>
 	<url>https://api.tsc.nchu.app</url>
