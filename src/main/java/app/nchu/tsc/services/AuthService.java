@@ -15,9 +15,6 @@ public class AuthService {
     @Autowired
     TSCSettings tscSettings;
 
-    @Autowired
-    Logger logger;
-
     private Authenticator authenticator;
     private UserInfoFetcher userInfoFetcher;
 

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.nchu.tsc.models.Member;
 import app.nchu.tsc.models.Redirecting;
+import app.nchu.tsc.repositories.MemberRepository;
 import app.nchu.tsc.repositories.RoleRepository;
 import app.nchu.tsc.services.MemberService;
 import app.nchu.tsc.services.RedirectingService;
@@ -33,6 +34,9 @@ public class AuthRestController {
     private MemberService memberService;
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
@@ -52,12 +56,13 @@ public class AuthRestController {
         if (memberService.isMemberExistsByResID(resID)) {
             member = memberService.getMemberByResID(resID);
         } else {
+            String role = memberRepository.findAll().size() == 0 ? "admin_role" : "default_role";
             member = memberService.createMember(
                 Member.builder()
                     .resID(resID)
                     .resToken(res_token)
                     .token(Random.generateRandomString(128))
-                    .role(roleRepository.findById(systemVariableService.get("default_role")).orElse(null))
+                    .role(roleRepository.findById(systemVariableService.get(role)).orElse(null))
                     .build()
             );
         }
