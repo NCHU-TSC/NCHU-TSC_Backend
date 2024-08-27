@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import app.nchu.tsc.models.Member;
 import app.nchu.tsc.models.Redirecting;
+import app.nchu.tsc.repositories.MemberRepository;
 import app.nchu.tsc.repositories.RoleRepository;
 import app.nchu.tsc.services.MemberService;
 import app.nchu.tsc.services.RedirectingService;
@@ -33,13 +34,16 @@ public class AuthRestController {
     private MemberService memberService;
 
     @Autowired
+    private MemberRepository memberRepository;
+
+    @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
     private TSCSettings tscSettings;
 
     @GetMapping("/callback")
-    private void callback(@RequestParam String state, @RequestParam String id, @RequestParam String token, HttpServletResponse response) {
+    private void callback(@RequestParam String state, @RequestParam String user_id, @RequestParam String res_token, HttpServletResponse response) {
         Redirecting r = redirectingService.getRedirecting(state);
 
         if (r == null || redirectingService.isExpired(r)) {
@@ -47,31 +51,32 @@ public class AuthRestController {
             return;
         }
 
-        UUID resID = UUID.fromString(id);
+        UUID resID = UUID.fromString(user_id);
         Member member;
         if (memberService.isMemberExistsByResID(resID)) {
+            member = memberService.getMemberByResID(resID);
+        } else {
+            String role = memberRepository.findAll().size() == 0 ? "admin_role" : "default_role";
             member = memberService.createMember(
                 Member.builder()
                     .resID(resID)
-                    .resToken(token)
+                    .resToken(res_token)
                     .token(Random.generateRandomString(128))
-                    .role(roleRepository.findById(systemVariableService.get("default_role")).orElse(null))
+                    .role(roleRepository.findById(systemVariableService.get(role)).orElse(null))
                     .build()
             );
-        } else {
-            member = memberService.getMemberByResID(resID);
         }
 
         response.addCookie(
             (new CookieBuilder("member_id", member.getId().toString()))
                 .httpOnly(false).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+                .domain(tscSettings.getFrontendURL(false, false)).build()
         );
 
         response.addCookie(
             (new CookieBuilder("member_token", member.getToken()))
                 .httpOnly(true).secure(true).path("/").maxAge(2592000)
-                .domain('.' + tscSettings.getFrontendURL(false, false)).build()
+                .domain(tscSettings.getFrontendURL(false, false)).build()
         );
 
         response.setHeader("Location", r.getHref());

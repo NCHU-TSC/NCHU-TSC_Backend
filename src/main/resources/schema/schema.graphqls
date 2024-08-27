@@ -1,21 +1,21 @@
 type Query {
-    ### 任何人皆可用
-    
     # 取得可申請的案件列表 （聯絡人資料會呈現空字串）
     availableCases: [GQL_Case!]!
 
-    ### 以下登入後才可用
-
     # 取得目前登入的社員資料
-    currentMember: GQL_Member!
+    currentMember: GQL_Member
 
-     # 取得已申請的接案列表
+    # 取得已申請的接案列表
     appliedCaseOrders: [GQL_CaseOrder!]!
 
-    ### 以下為幹部專用
+    # 取得身分組資料
+    role(roleName: String!): GQL_Role
+
+    # 取得身分組列表
+    roles: [GQL_Role!]!
 
     # 取得社員資料
-    member(id: ID!): GQL_Member! 
+    member(id: ID!): GQL_Member
 
     # 取得社員列表
     members: [GQL_Member!]!
@@ -27,34 +27,30 @@ type Query {
     cases: [GQL_Case!]!
 
     # 取得接案資料
-    caseOrder(id: ID!): GQL_CaseOrder!
+    caseOrder(id: ID!): GQL_CaseOrder
 
     # 取得接案列表
     caseOrders: [GQL_CaseOrder!]!
 
     # 取得社團記帳資料
-    bankRecord(id: ID!): GQL_BankRecord!
+    bankRecord(id: ID!): GQL_BankRecord
 
     # 取得社團記帳列表
     bankRecords: [GQL_BankRecord!]!
 
     # 取得系統變數
-    systemVariable(key: String!): String!
+    systemVariable(key: String!): String
 
     # 取得系統變數列表
     systemVariables: [GQL_SystemVariable!]!
 }
 
 type Mutation {
-    ### 任何人皆可用
-
     # 取得登入網址（href 為登入後要導向的網址）
     login(href: String!): GQL_URL!
 
     # 新增案件
     addCase(data: GQL_CaseInput!): GQL_Case!
-
-    ### 以下登入後才可用
 
     # 取得登出網址（href 為登出後要導向的網址）
     logout(href: String!): GQL_URL!
@@ -70,8 +66,6 @@ type Mutation {
     
     # 回報接案
     reportCaseOrder(id: ID!, report: GQL_CaseOrderReportInput!): GQL_CaseOrder!
-
-    ### 以下為幹部專用
 
     # 審核入社申請
     determineJoinMember(id: ID!, accept: Boolean!): GQL_Member!
@@ -221,9 +215,6 @@ type GQL_InfoFromAuthServer {
     # ID in Auth Server
     id: ID!
 
-    # 建立時間
-    createTime: String!
-
     # 資源存取令牌（由於安全因素，管理員查詢時才有結果）
     token: String
 
@@ -280,7 +271,7 @@ type GQL_Member {
     token: String
 
     # 基本資料
-    basicInfo: GQL_InfoFromAuthServer!
+    basicInfo: GQL_InfoFromAuthServer
 
     # 加入時間
     joinTime: String!

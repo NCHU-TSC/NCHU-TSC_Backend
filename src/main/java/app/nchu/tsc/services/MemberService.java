@@ -67,7 +67,13 @@ public class MemberService {
         GQL_Member result = new GQL_Member();
 
         result.setId(member.getId().toString());
-        result.setBasicInfo(AuthService.toUserInfo(authService.getUserInfo(member.getResID().toString(), member.getResToken())));
+
+        if(member.getResID() == null || member.getResToken() == null) {
+            result.setBasicInfo(null);
+        } else {
+            result.setBasicInfo(AuthService.toUserInfo(authService.getUserInfo(member.getResID().toString(), member.getResToken())));
+        }
+
         result.setJoinTime(member.getJoinTime().toString());
         result.setToken(member.getToken());
         result.setRole(RoleService.toRole(member.getRole()));
@@ -76,7 +82,13 @@ public class MemberService {
         result.setExpertise(member.getExpertise());
         result.setDutyTime(member.getDutyTime());
         result.setApplying(member.isApplying());
-        result.setLastPayEntryTime(member.getLastPayEntryTime().toString());
+
+        if(member.getLastPayEntryTime() == null) {
+            result.setLastPayEntryTime(null);
+        } else {
+            result.setLastPayEntryTime(member.getLastPayEntryTime().toString());
+        }
+        
         result.setBlocked(member.isBlocked());
         result.setNote(member.getNote());
 

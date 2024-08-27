@@ -22,14 +22,12 @@ public class Log {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Builder.Default
     @Column(nullable = false, columnDefinition = "DATETIME")
-    private LocalDateTime time = LocalDateTime.now();
+    private LocalDateTime time;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    @Builder.Default
-    private Level level = Level.INFO;
+    private Level level;
 
     @Column(nullable = false)
     private String namespace;
@@ -38,12 +36,15 @@ public class Log {
     private String detail;
 
     public Log(Level level, String namespace, String detail) {
+        this.time = LocalDateTime.now();
         this.level = level;
         this.namespace = namespace;
         this.detail = detail;
     }
 
     public Log(String namespace, String detail) {
+        this.time = LocalDateTime.now();
+        this.level = Level.INFO;
         this.namespace = namespace;
         this.detail = detail;
     }
