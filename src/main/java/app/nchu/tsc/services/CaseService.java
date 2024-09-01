@@ -41,7 +41,7 @@ public class CaseService {
 
     public boolean isAvailable(CaseID id) {
         Case c = caseRepository.findById(id).get();
-        List<CaseOrder> orders = caseOrderRepository.findByCaseID(id);
+        List<CaseOrder> orders = caseOrderRepository.findByCaseID(c);
 
         boolean existSuccessReport = false;
         for(CaseOrder o : orders) {

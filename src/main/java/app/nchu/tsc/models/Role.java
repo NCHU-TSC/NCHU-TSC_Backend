@@ -32,6 +32,9 @@ public class Role {
     private boolean needPayToJoin;
 
     @Column(nullable = false)
+    private boolean needPayToApplyCase;
+
+    @Column(nullable = false)
     private boolean systemAccount;
 
     @Column(nullable = false)

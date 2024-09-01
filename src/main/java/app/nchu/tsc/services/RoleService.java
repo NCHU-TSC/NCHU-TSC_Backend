@@ -51,6 +51,7 @@ public class RoleService {
 
         result.setName(role.getName());
         result.setNeedPayToJoin(role.isNeedPayToJoin());
+        result.setNeedPayToApplyCase(role.isNeedPayToApplyCase());
         result.setSystemAccount(role.isSystemAccount());
         result.setCanViewLog(role.isCanViewLog());
         result.setCanViewRole(role.isCanViewRole());
@@ -70,7 +71,7 @@ public class RoleService {
     public static Role toRole(GQL_Role role) {
         return Role.builder()
                 .name(role.getName())
-                .needPayToJoin(role.getNeedPayToJoin())
+                .needPayToJoin(role.getNeedPayToJoin()).needPayToApplyCase(role.getNeedPayToApplyCase())
                 .systemAccount(role.getSystemAccount())
                 .canViewLog(role.getCanViewLog())
                 .canViewRole(role.getCanViewRole()).canModifyRole(role.getCanModifyRole())

@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import app.nchu.tsc.models.CaseID;
+import app.nchu.tsc.models.Case;
 import app.nchu.tsc.models.CaseOrder;
 import app.nchu.tsc.models.Member;
 
@@ -14,6 +14,6 @@ import app.nchu.tsc.models.Member;
 public interface CaseOrderRepository extends JpaRepository<CaseOrder, UUID> {
     
     List<CaseOrder> findByMemberID(Member memberID);
-    List<CaseOrder> findByCaseID(CaseID caseID);
+    List<CaseOrder> findByCaseID(Case caseID);
 
 }

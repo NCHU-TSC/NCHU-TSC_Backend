@@ -22,10 +22,10 @@ public class CustomDataFetcherExceptionHandler  implements DataFetcherExceptionH
 
     @Override
     public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters parameters) {
+        HashMap<String, Object> debugInfo = new HashMap<>();
+        debugInfo.put("please_no_bugs", NoBugs.NO_BUGS_ASCII_ART);
+
         if(parameters.getException() instanceof UnauthenticatedException) {
-            HashMap<String, Object> debugInfo = new HashMap<>();
-            debugInfo.put("hello", "world");
-            
             GraphQLError error = TypedGraphQLError.newBuilder().errorType(ErrorType.UNAUTHENTICATED)
                     .message(parameters.getException().getMessage())
                     .path(parameters.getPath()).location(parameters.getSourceLocation())
@@ -33,9 +33,6 @@ public class CustomDataFetcherExceptionHandler  implements DataFetcherExceptionH
                     
             return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(error).build());
         } else if (parameters.getException() instanceof PermissionDeniedException) {
-            HashMap<String, Object> debugInfo = new HashMap<>();
-            debugInfo.put("hello", "world");
-            
             GraphQLError error = TypedGraphQLError.newPermissionDeniedBuilder()
                     .message(parameters.getException().getMessage())
                     .path(parameters.getPath()).location(parameters.getSourceLocation())
@@ -43,10 +40,14 @@ public class CustomDataFetcherExceptionHandler  implements DataFetcherExceptionH
                     
             return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(error).build());
         } else if(parameters.getException() instanceof RequestedResourceNotFound) {
-            HashMap<String, Object> debugInfo = new HashMap<>();
-            debugInfo.put("hello", "world");
-            
             GraphQLError error = TypedGraphQLError.newNotFoundBuilder().errorDetail(ErrorDetail.Common.FIELD_NOT_FOUND)
+                    .message(parameters.getException().getMessage())
+                    .path(parameters.getPath()).location(parameters.getSourceLocation())
+                    .debugInfo(debugInfo).debugUri("debugUri").build();
+                    
+            return CompletableFuture.completedFuture(DataFetcherExceptionHandlerResult.newResult().error(error).build());
+        } else if(parameters.getException() instanceof IllegalArgumentException) {
+            GraphQLError error = TypedGraphQLError.newBadRequestBuilder().errorDetail(ErrorDetail.Common.INVALID_ARGUMENT)
                     .message(parameters.getException().getMessage())
                     .path(parameters.getPath()).location(parameters.getSourceLocation())
                     .debugInfo(debugInfo).debugUri("debugUri").build();
