@@ -23,7 +23,7 @@ public class CustomDataFetcherExceptionHandler  implements DataFetcherExceptionH
     @Override
     public CompletableFuture<DataFetcherExceptionHandlerResult> handleException(DataFetcherExceptionHandlerParameters parameters) {
         HashMap<String, Object> debugInfo = new HashMap<>();
-        debugInfo.put("hello", "world");
+        debugInfo.put("please_no_bugs", NoBugs.NO_BUGS_ASCII_ART);
 
         if(parameters.getException() instanceof UnauthenticatedException) {
             GraphQLError error = TypedGraphQLError.newBuilder().errorType(ErrorType.UNAUTHENTICATED)
