@@ -99,8 +99,14 @@ public class CaseOrderController {
         co.setApplyMethod(ApplyMethod.valueOf(data.getApplyMethod().name()));
         co.setBankAccount(data.getBankAccount());
         co.setComment(data.getComment());
-        co.setApplying(true);
-        co.setAccepted(false);
+
+        if(operator.getRole().isNeedPayToApplyCase()) {
+            co.setApplying(true);
+            co.setAccepted(false);
+        } else {
+            co.setApplying(false);
+            co.setAccepted(true);
+        }
 
         return caseOrderService.toCaseOrder(caseOrderRepository.save(co));
     }

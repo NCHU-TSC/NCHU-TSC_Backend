@@ -64,6 +64,30 @@ public class RoleController {
     }
 
     @DgsMutation
+    private GQL_Role addRole(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String roleName) {
+        Member operator = memberService.verifyWithToken(member_id, member_token);
+        if(operator == null) throw new UnauthenticatedException();
+
+        if(!operator.getRole().isCanModifyRole()) throw new PermissionDeniedException(member_id);
+
+        if(roleRepository.findById(roleName).isPresent()) throw new RequestedResourceNotFound("Role", roleName);
+
+        return RoleService.toRole(roleRepository.save(
+            Role.builder()
+                .name(roleName)
+                .needPayToJoin(false).needPayToApplyCase(false)
+                .systemAccount(false)
+                .canViewLog(false)
+                .canViewRole(false).canModifyRole(false)
+                .canViewMember(false).canModifyMember(false)
+                .canViewCase(false).canModifyCase(false)
+                .canViewCaseOrder(false).canModifyCaseOrder(false)
+                .canViewBankRecord(false).canModifyBankRecord(false)
+                .build()
+        ));
+    }
+
+    @DgsMutation
     private GQL_Role setRoleData(@CookieValue UUID member_id, @CookieValue String member_token, @InputArgument String roleName, @InputArgument List<GQL_RolePairInput> data) {
         Member operator = memberService.verifyWithToken(member_id, member_token);
         if(operator == null) throw new UnauthenticatedException();

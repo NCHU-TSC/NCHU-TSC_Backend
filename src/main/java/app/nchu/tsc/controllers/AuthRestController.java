@@ -56,7 +56,7 @@ public class AuthRestController {
         if (memberService.isMemberExistsByResID(resID)) {
             member = memberService.getMemberByResID(resID);
         } else {
-            String role = memberRepository.findAll().size() == 0 ? "admin_role" : "default_role";
+            String role = memberRepository.findAll().size() == 0 ? "first_member_role" : "default_role";
             member = memberService.createMember(
                 Member.builder()
                     .resID(resID)

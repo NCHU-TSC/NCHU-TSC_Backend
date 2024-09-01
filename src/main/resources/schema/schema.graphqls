@@ -82,6 +82,9 @@ type Mutation {
     # 設定社員黑名單
     setMemberBlocked(id: ID!, blocked: Boolean!): GQL_Member!
 
+    # 新增身分組
+    addRole(roleName: String!): GQL_Role!
+
     # 設定身分組
     setRoleData(roleName: String!, data: [GQL_RolePairInput!]!): GQL_Role!
 
@@ -167,6 +170,9 @@ type GQL_Role {
 
     # 需要繳費入社
     needPayToJoin: Boolean!
+
+    # 需要繳費才可申請接案
+    needPayToApplyCase: Boolean!
 
     # 系統帳戶
     systemAccount: Boolean!
